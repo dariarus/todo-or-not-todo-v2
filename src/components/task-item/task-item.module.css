@@ -1,0 +1,90 @@
+.task {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 0 10px 0;
+  padding: 0;
+  list-style: none;
+  cursor: move;
+}
+
+.task_is-dragging {
+  opacity: 0;
+}
+
+.task__checkbox {
+  /* скрыть дефолтный чекбокс */
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0 10px 0 0;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.task__checkbox::before {
+  box-sizing: border-box;
+  display: flex;
+  content: '';
+  background-color: #fff;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #abb1c1;
+  border-radius: 50%;
+  transition: box-shadow 0.25s ease;
+}
+
+.task__checkbox:checked::before {
+  border: 2px solid #00996f;
+  background: url(../../images/tick.svg) center center no-repeat;
+}
+
+.task__item {
+  padding: 10px 40px;
+  width: 100%;
+  border-radius: 30px;
+  box-shadow: 5px 5px 5px #abb1c1;
+}
+
+.task__item_is-done {
+  box-shadow: inset 3px 3px 5px #abb1c1;
+}
+
+.task__text {
+  margin: 0;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  font-weight: 300;
+  color: #000;
+  overflow-wrap: break-word;
+}
+
+.task__text_crossed {
+  color: #abb1c1;
+  text-decoration: line-through ;
+}
+
+.task__text_heading {
+  margin-bottom: 5px;
+  font-size: 20px;
+  line-height: 22px;
+}
+
+.task__text_description {
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.task__cross-button {
+  all: unset;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: url(../../images/cross-black.svg) center center no-repeat;
+  transition: background-image .2s;
+  transform: translate(0, -50%);
+}
+
+.task__cross-button:hover {
+  background: url(../../images/cross-green.svg) center center no-repeat;
+}
