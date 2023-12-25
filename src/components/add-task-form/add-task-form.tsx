@@ -7,6 +7,8 @@ import {TAddTasksForm} from '../../services/types/props';
 
 import {inputsValuesInitialState} from '../../utils/constants';
 import {generateUniqueId} from '../../utils/functions';
+import {RadioButton} from '../radio-button/radio-button';
+import {TaskInputs} from '../task-inputs/task-inputs';
 
 export const AddTaskForm: FunctionComponent<TAddTasksForm> = (props) => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
@@ -17,29 +19,22 @@ export const AddTaskForm: FunctionComponent<TAddTasksForm> = (props) => {
             e.preventDefault();
           }}
     >
-      <div className={addTaskFormStyles['form__input-wrap']}>
-        <input type="text"
-               value={inputsValues.textInputValue}
-               placeholder="Задача"
-               className={`${addTaskFormStyles.input} ${addTaskFormStyles['text-input']}`}
-               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                 setInputsValues({
-                   ...inputsValues,
-                   textInputValue: e.target.value
-                 })
-               }}
-        />
-        <textarea value={inputsValues.textAreaValue}
-                  placeholder="Описание (опционально)"
-                  className={addTaskFormStyles['text-area']}
-                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                    setInputsValues({
-                      ...inputsValues,
-                      textAreaValue: e.target.value
-                    })
-                  }}
-        />
-      </div>
+      <TaskInputs
+        isPopupInput={false}
+        taskNameValue={inputsValues.textInputValue}
+        taskDescriptionValue={inputsValues.textAreaValue}
+        setTaskNameValue={(e: ChangeEvent<HTMLInputElement>) => {
+          setInputsValues({
+            ...inputsValues,
+            textInputValue: e.target.value
+          })
+        }}
+        setTaskDescriptionValue={(e: ChangeEvent<HTMLTextAreaElement>) => {
+          setInputsValues({
+            ...inputsValues,
+            textAreaValue: e.target.value
+          })
+        }}/>
       <button type="submit"
               className={addTaskFormStyles.button}
               disabled={inputsValues.textInputValue === ''}

@@ -8,3 +8,10 @@ export const inputsValuesInitialState = {
   textInputValue: '',
   textAreaValue: ''
 };
+
+export const taskInfoInitialState = {
+  id: '',
+  name: '',
+  description: undefined,
+  isDone: false,
+}

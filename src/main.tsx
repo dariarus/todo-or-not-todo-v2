@@ -10,7 +10,7 @@ import './index.css';
 import './fonts/fonts.css';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('app') as HTMLElement
 );
 root.render(
   <React.StrictMode>

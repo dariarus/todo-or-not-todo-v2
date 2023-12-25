@@ -8,15 +8,18 @@ import {AddTaskForm} from '../add-task-form/add-task-form';
 import {RadioButton} from '../radio-button/radio-button';
 import {TaskItem} from '../task-item/task-item';
 
-import {radioButtonsInitialState} from '../../utils/constants';
+import {radioButtonsInitialState, taskInfoInitialState} from '../../utils/constants';
 
 import {IRadioButtonsState} from '../../services/types/state';
 import {TTask} from '../../services/types/props';
+import {Popup} from '../popup/popup';
 
 function App() {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
   const [tasksArray, setTasksArray] = useState<Array<TTask>>([]);
   const [showingArray, setShowingArray] = useState<Array<TTask>>(tasksArray);
+  const [popupIsOpen, setPopupIsOpen] = useState<boolean>(false);
+  const [taskInfo, setTaskInfo] = useState<TTask>(taskInfoInitialState);
 
   const handleSetTasksArray = (task: TTask) => {
     let copiedTasks = [...tasksArray];
@@ -47,6 +50,26 @@ function App() {
       }
     }
     setTasksArray(copiedTasks);
+  }
+
+  const handleOnOpenEditPopup = (taskId: string, taskName: string, taskDescription: string | undefined, taskStatus: boolean) => {
+    setPopupIsOpen(true);
+    setTaskInfo({
+      id: taskId,
+      name: taskName,
+      description: taskDescription,
+      isDone: taskStatus,
+    })
+  }
+
+  const handleOnCloseEditPopup = () => {
+    setPopupIsOpen(false);
+    setTaskInfo({
+      id: '',
+      name: '',
+      description: undefined,
+      isDone: false,
+    })
   }
 
   const handleOnMoveTask = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -101,7 +124,7 @@ function App() {
     <main className={appStyles.main}>
       <h1 className={appStyles['todos-board__heading']}>Мои задачи</h1>
       <div className={appStyles['todos-board']}>
-        <AddTaskForm tasksArray={tasksArray} onAddTask={handleSetTasksArray}/>
+        <AddTaskForm onAddTask={handleSetTasksArray}/>
         <div className={appStyles['todos-board__tasks-wrap']}>
           <div className={appStyles['radio-button-wrap']}>
             <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
@@ -143,6 +166,7 @@ function App() {
                                   description={task.description}
                                   isDone={task.isDone}
                                   onChangeTaskStatus={handleOnChangeTaskStatus}
+                                  onEditTask={() => handleOnOpenEditPopup(task.id, task.name, task.description, task.isDone)}
                                   onDeleteTask={handleOnDeleteTask}
                                   onMoveTask={handleOnMoveTask}
                         />
@@ -155,6 +179,16 @@ function App() {
           </div>
         </div>
       </div>
+      {
+        popupIsOpen &&
+        <Popup
+          id={taskInfo.id}
+          name={taskInfo.name}
+          description={taskInfo.description}
+          isDone={taskInfo.isDone}
+          onChangeTaskStatus={handleOnChangeTaskStatus}
+          onClosePopup={handleOnCloseEditPopup}/>
+      }
     </main>
   );
 }

@@ -101,7 +101,13 @@ export const TaskItem: FunctionComponent<TTaskItem> = (props) => {
           </div>
       }
       <button type="button"
-              className={taskItemStyles['task__cross-button']}
+              className={`${taskItemStyles.task__button} ${taskItemStyles['task__button_type_edit']}`}
+              onClick={() => {
+                props.onEditTask(props.id);
+              }}
+      />
+      <button type="button"
+              className={`${taskItemStyles.task__button} ${taskItemStyles['task__button_type_delete']}`}
               onClick={() => {
                 props.onDeleteTask(props.id);
               }}

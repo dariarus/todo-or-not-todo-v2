@@ -17,6 +17,7 @@
   -webkit-appearance: none;
   appearance: none;
   margin: 0 10px 0 0;
+  width: 40px;
   cursor: pointer;
   transition: 0.25s ease;
 }
@@ -39,7 +40,7 @@
 }
 
 .task__item {
-  padding: 10px 40px;
+  padding: 10px 75px;
   width: 100%;
   border-radius: 30px;
   box-shadow: 5px 5px 5px #abb1c1;
@@ -73,18 +74,31 @@
   line-height: 16px;
 }
 
-.task__cross-button {
+.task__button {
   all: unset;
   position: absolute;
   top: 50%;
-  right: 10px;
   width: 30px;
   height: 30px;
-  background: url(../../images/cross-black.svg) center center no-repeat;
   transition: background-image .2s;
-  transform: translate(0, -50%);
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
-.task__cross-button:hover {
+.task__button_type_edit {
+  right: 45px;
+  background: url(../../images/edit-icon-black.svg) center center / 130% no-repeat;
+}
+
+.task__button_type_edit:hover {
+  background: url(../../images/edit-icon-green.svg) center center / 130% no-repeat;
+}
+
+.task__button_type_delete {
+  right: 10px;
+  background: url(../../images/cross-black.svg) center center no-repeat;
+}
+
+.task__button_type_delete:hover {
   background: url(../../images/cross-green.svg) center center no-repeat;
 }
