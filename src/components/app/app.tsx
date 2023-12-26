@@ -52,6 +52,21 @@ function App() {
     setTasksArray(copiedTasks);
   }
 
+  const handleOnChangeTask = (taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) => {
+    let copiedTasks = tasksArray.map(task => {
+      return {...task}
+    });
+    if (taskId) {
+      const task = copiedTasks.find(task => task.id === taskId);
+      if (task) {
+        task.name = taskName;
+        task.description = taskDescription;
+        task.isDone = isDone;
+      }
+    }
+    setTasksArray(copiedTasks);
+  }
+
   const handleOnOpenEditPopup = (taskId: string, taskName: string, taskDescription: string | undefined, taskStatus: boolean) => {
     setPopupIsOpen(true);
     setTaskInfo({

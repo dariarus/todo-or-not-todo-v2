@@ -24,10 +24,6 @@ export const Popup: FunctionComponent<TPopup> = (props) => {
     }
   }, [props])
 
-  const handleChangeTaskIsDone = () => {
-
-  }
-
   useEffect(() => {
     document.addEventListener("keydown", handleEscClose)
     return () => {
@@ -69,15 +65,26 @@ export const Popup: FunctionComponent<TPopup> = (props) => {
                        checked={taskIsDone}
                        className={taskItemStyles['task__checkbox']}
                        onChange={() => {
-                         props.onChangeTaskStatus(props.id);
+                         setInputsValues({
+                           ...inputsValues,
+                           isDone: !taskIsDone
+                         })
+
+                         // props.onChangeTaskStatus(props.id);
                          setTaskIsDone(!taskIsDone);
-                       }}
+                        }}
                 />
                 <label htmlFor={props.name} className={popupStyles['popup__checkbox-label']}>Задача выполнена</label>
               </div>
               <div className={popupStyles['popup__buttons-wrap']}>
-                <button className={`${popupStyles.popup__button} ${popupStyles.popup__button_type_save}`}>Сохранить</button>
-                <button className={`${popupStyles.popup__button} ${popupStyles.popup__button_type_cancel}`}>Отменить</button>
+                <button
+                  className={`${popupStyles.popup__button} ${popupStyles.popup__button_type_save}`}
+                  onClick={() => console.log('hi')}
+                >Сохранить</button>
+                <button
+                  className={`${popupStyles.popup__button} ${popupStyles.popup__button_type_cancel}`}
+                  onClick={props.onClosePopup}
+                >Отменить</button>
               </div>
             </form>
           </div>

@@ -35,6 +35,7 @@ export type TTaskInputs = {
 }
 
 export type TPopup = TTask & {
+  // onChangeTask: () => void
   onClosePopup: () => void,
   onChangeTaskStatus: (taskId: string) => void,
 }
