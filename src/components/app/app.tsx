@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {FunctionComponent, useCallback, useEffect, useState} from 'react';
+import {observer} from 'mobx-react-lite';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 
@@ -7,90 +8,57 @@ import appStyles from './app.module.css';
 import {AddTaskForm} from '../add-task-form/add-task-form';
 import {RadioButton} from '../radio-button/radio-button';
 import {TaskItem} from '../task-item/task-item';
+import {Popup} from '../popup/popup';
+
+import mainStore from '../../stores';
 
 import {radioButtonsInitialState, taskInfoInitialState} from '../../utils/constants';
 
 import {IRadioButtonsState} from '../../services/types/state';
 import {TTask} from '../../services/types/props';
-import {Popup} from '../popup/popup';
 
-function App() {
+const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
-  const [tasksArray, setTasksArray] = useState<Array<TTask>>([]);
-  const [showingArray, setShowingArray] = useState<Array<TTask>>(tasksArray);
-  const [popupIsOpen, setPopupIsOpen] = useState<boolean>(false);
-  const [taskInfo, setTaskInfo] = useState<TTask>(taskInfoInitialState);
-
-  const handleSetTasksArray = (task: TTask) => {
-    let copiedTasks = [...tasksArray];
-    copiedTasks.push(task);
-    setTasksArray(copiedTasks);
-  }
 
   const refreshTasksArray = () => {
     if (filterRadioButtons.allIsChecked) {
-      setShowingArray(tasksArray);
+      // setShowingArray(tasksArray);
+      mainStore.tasks.setShowingTasksArray(mainStore.tasks.fullTasksArray);
     } else if (filterRadioButtons.undoneIsChecked) {
-      const filteredUndoneTasksArray = tasksArray.filter(task => !task.isDone);
-      setShowingArray(filteredUndoneTasksArray);
+      const filteredUndoneTasksArray = mainStore.tasks.fullTasksArray.filter(task => !task.isDone);
+      // setShowingArray(filteredUndoneTasksArray);
+      mainStore.tasks.setShowingTasksArray(filteredUndoneTasksArray);
     } else {
-      const filteredDoneTasksArray = tasksArray.filter(task => task.isDone);
-      setShowingArray(filteredDoneTasksArray);
+      const filteredDoneTasksArray = mainStore.tasks.fullTasksArray.filter(task => task.isDone);
+      // setShowingArray(filteredDoneTasksArray);
+      mainStore.tasks.setShowingTasksArray(filteredDoneTasksArray);
     }
   }
 
-  const handleOnChangeTaskStatus = (taskId: string) => {
-    let copiedTasks = tasksArray.map(task => {
-      return {...task}
-    });
-    if (taskId) {
-      const task = copiedTasks.find(task => task.id === taskId);
-      if (task) {
-        task.isDone = !task.isDone;
-      }
-    }
-    setTasksArray(copiedTasks);
-  }
-
-  const handleOnChangeTask = (taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) => {
-    let copiedTasks = tasksArray.map(task => {
-      return {...task}
-    });
-    if (taskId) {
-      const task = copiedTasks.find(task => task.id === taskId);
-      if (task) {
-        task.name = taskName;
-        task.description = taskDescription;
-        task.isDone = isDone;
-      }
-    }
-    setTasksArray(copiedTasks);
-  }
-
-  const handleOnOpenEditPopup = (taskId: string, taskName: string, taskDescription: string | undefined, taskStatus: boolean) => {
-    setPopupIsOpen(true);
-    setTaskInfo({
-      id: taskId,
-      name: taskName,
-      description: taskDescription,
-      isDone: taskStatus,
-    })
-  }
-
-  const handleOnCloseEditPopup = () => {
-    setPopupIsOpen(false);
-    setTaskInfo({
-      id: '',
-      name: '',
-      description: undefined,
-      isDone: false,
-    })
-  }
+  // const handleOnChangeTask = (taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) => {
+  //   let copiedTasks = tasksArray.map(task => {
+  //     return {...task}
+  //   });
+  //   if (taskId) {
+  //     const task = copiedTasks.find(task => task.id === taskId);
+  //     if (task) {
+  //       task.name = taskName;
+  //       task.description = taskDescription;
+  //       task.isDone = isDone;
+  //     }
+  //   }
+  //   setTasksArray(copiedTasks);
+  // }
 
   const handleOnMoveTask = useCallback((dragIndex: number, hoverIndex: number) => {
-    /* Перемещаем элементы в массиве showingArray, отображаемом в зависимости от выбранной сортировки задач,
+    /* Перемещаем элементы в массиве mainStore.tasks.showingTasksArray, отображаемом в зависимости от выбранной сортировки задач,
     на основе его индексов */
-    const updatedShowingArray = [...showingArray];
+
+    /* Если модифицировать напрямую mainStore (например, писать mainStore.tasks.showingTasksArray[dragIndex] = hoverItem),
+    то возникает предупреждение "[MobX] Since strict-mode is enabled,
+    changing (observed) observable values without using an action is not allowed. Tried to modify: Tasks@1.fullTasksArray"
+    Поэтому применено копирование состояния и запись обновленного массива обратно в mainStore*/
+    const updatedShowingArray = [...mainStore.tasks.showingTasksArray];
 
     const dragItem = updatedShowingArray[dragIndex]
     const hoverItem = updatedShowingArray[hoverIndex]
@@ -98,10 +66,11 @@ function App() {
     updatedShowingArray[dragIndex] = hoverItem;
     updatedShowingArray[hoverIndex] = dragItem;
 
-    setShowingArray(updatedShowingArray);
+    // setShowingArray(updatedShowingArray);
+    mainStore.tasks.setShowingTasksArray(updatedShowingArray);
 
-    // Перемещаем элементы в основном массиве tasksArray на основе его индексов
-    const updatedTasksArray = [...tasksArray];
+    // Перемещаем элементы в основном массиве mainStore.tasks.fullTasksArray на основе его индексов
+    const updatedTasksArray = [...mainStore.tasks.fullTasksArray];
 
     const dragTask = updatedTasksArray.find(task => task.id === dragItem.id);
     const hoverTask = updatedTasksArray.find(task => task.id === hoverItem.id);
@@ -113,33 +82,29 @@ function App() {
       updatedTasksArray[hoverTaskIndex] = dragItem;
     }
 
-    setTasksArray(updatedTasksArray);
-  }, [tasksArray, showingArray])
-
-  const handleOnDeleteTask = (taskId: string) => {
-    let copiedTasks = [...tasksArray];
-    if (taskId) {
-      const task = copiedTasks.find(task => task.id === taskId);
-      let taskIndex = -1;
-      if (task) {
-        taskIndex = copiedTasks.indexOf(task);
-      }
-      if (taskIndex > -1) {
-        copiedTasks.splice(taskIndex, 1);
-      }
-    }
-    setTasksArray(copiedTasks);
-  }
+    mainStore.tasks.setFullTasksArray(updatedTasksArray);
+  }, [mainStore.tasks.fullTasksArray, mainStore.tasks.showingTasksArray])
 
   useEffect(() => {
     refreshTasksArray();
-  }, [tasksArray, filterRadioButtons.allIsChecked, filterRadioButtons.undoneIsChecked, filterRadioButtons.doneIsChecked])
+  }, [
+    mainStore.tasks.fullTasksArray,
+    filterRadioButtons.allIsChecked,
+    filterRadioButtons.undoneIsChecked,
+    filterRadioButtons.doneIsChecked
+  ])
 
   return (
     <main className={appStyles.main}>
       <h1 className={appStyles['todos-board__heading']}>Мои задачи</h1>
       <div className={appStyles['todos-board']}>
-        <AddTaskForm onAddTask={handleSetTasksArray}/>
+        {/*1). Не работает, так как прокинута ссылка на ф-цию, без контекста.
+        Т.е. в месте вызова не будет объявлена переменная this.fullTasksArray, и поэтому падает в ошибку this.fullTasksArray - undefined */}
+        {/*<AddTaskForm onAddTask={mainStore.tasks.addNewTask}/>*/}
+        {/*2). Работает, так как прокинут контекст в сам коллбэк (task: TTask) => ...*/}
+        {/*<AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
+        {/*3). Но можно вообще без пропсов, а вызвать addTask прямо в месте выполнения. Тогда нет проблем с контекстом*/}
+        <AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>
         <div className={appStyles['todos-board__tasks-wrap']}>
           <div className={appStyles['radio-button-wrap']}>
             <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
@@ -169,20 +134,17 @@ function App() {
           </div>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
             {
-              showingArray && showingArray.length > 0
+              mainStore.tasks.showingTasksArray && mainStore.tasks.showingTasksArray.length > 0
                 ? <DndProvider backend={HTML5Backend}>
                   <ul className={appStyles['todos-board__tasks-list']}>
                     {
-                      showingArray.map((task, index) => (
+                      mainStore.tasks.showingTasksArray.map((task, index) => (
                         <TaskItem key={task.id}
                                   id={task.id}
                                   index={index}
                                   name={task.name}
                                   description={task.description}
                                   isDone={task.isDone}
-                                  onChangeTaskStatus={handleOnChangeTaskStatus}
-                                  onEditTask={() => handleOnOpenEditPopup(task.id, task.name, task.description, task.isDone)}
-                                  onDeleteTask={handleOnDeleteTask}
                                   onMoveTask={handleOnMoveTask}
                         />
                       )).reverse()
@@ -195,17 +157,12 @@ function App() {
         </div>
       </div>
       {
-        popupIsOpen &&
-        <Popup
-          id={taskInfo.id}
-          name={taskInfo.name}
-          description={taskInfo.description}
-          isDone={taskInfo.isDone}
-          onChangeTaskStatus={handleOnChangeTaskStatus}
-          onClosePopup={handleOnCloseEditPopup}/>
+        mainStore.popup.isOpened &&
+        <Popup/>
       }
     </main>
-  );
-}
+  )
+    ;
+})
 
 export default App;

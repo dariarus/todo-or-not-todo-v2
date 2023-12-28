@@ -8,13 +8,23 @@ import App from './components/app/app';
 import './vendor/normalize.css';
 import './index.css';
 import './fonts/fonts.css';
+import mainStore from './stores';
+import {Provider} from 'mobx-react';
 
-const root = ReactDOM.createRoot(
+const stores = {
+  mainStore,
+  tasksStore: mainStore.tasks,
+  popupStore: mainStore.popup,
+};
+
+const app = ReactDOM.createRoot(
   document.getElementById('app') as HTMLElement
 );
-root.render(
+app.render(
   <React.StrictMode>
+    <Provider {...stores}>
     <App />
+    </Provider>
   </React.StrictMode>
 );
 

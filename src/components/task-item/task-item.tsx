@@ -1,12 +1,18 @@
-import React, {FunctionComponent, useRef} from 'react';
+import React, {FunctionComponent, useRef, useState} from 'react';
+import {observer} from 'mobx-react-lite';
 import {DropTargetMonitor, useDrag, useDrop} from 'react-dnd';
 import {Identifier, XYCoord} from 'dnd-core';
 
 import taskItemStyles from './task-item.module.css';
 
+import {IsDoneCheckbox} from '../is-done-checkbox/is-done-checkbox';
+
+import mainStore from '../../stores';
+
 import {TTaskItem} from '../../services/types/props';
 
-export const TaskItem: FunctionComponent<TTaskItem> = (props) => {
+export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
+  const [taskIsDone, setTaskIsDone] = useState<boolean>(props.isDone);
   const ref = useRef<HTMLLIElement>(null);
 
   const [{isDragging}, dragRef] = useDrag({
@@ -22,7 +28,7 @@ export const TaskItem: FunctionComponent<TTaskItem> = (props) => {
   const [{handlerId}, dropRef] = useDrop<TTaskItem,
     void,
     { handlerId: Identifier | null }
-    >({
+  >({
     accept: 'task',
     collect(monitor: DropTargetMonitor) {
       return {
@@ -75,13 +81,13 @@ export const TaskItem: FunctionComponent<TTaskItem> = (props) => {
     <li ref={ref}
         data-handler-id={handlerId}
         className={isDragging ? `${taskItemStyles.task} ${taskItemStyles['task_is-dragging']}` : `${taskItemStyles.task}`}>
-      <input type="checkbox"
-             checked={props.isDone}
-             className={taskItemStyles['task__checkbox']}
-             onChange={() => {
-               props.onChangeTaskStatus(props.id);
-             }}
-      />
+      <IsDoneCheckbox
+        id={mainStore.popup.openedTask.name}
+        checked={taskIsDone}
+        onChange={() => {
+          mainStore.tasks.changeTaskStatus(props.id);
+          setTaskIsDone(!taskIsDone);
+        }}/>
       {
         props.isDone
           ? <div className={`${taskItemStyles['task__item']} ${taskItemStyles['task__item_is-done']}`}>
@@ -103,15 +109,15 @@ export const TaskItem: FunctionComponent<TTaskItem> = (props) => {
       <button type="button"
               className={`${taskItemStyles.task__button} ${taskItemStyles['task__button_type_edit']}`}
               onClick={() => {
-                props.onEditTask(props.id);
+                mainStore.popup.setPopupIsOpened(props.id, props.name, props.description, props.isDone);
               }}
       />
       <button type="button"
               className={`${taskItemStyles.task__button} ${taskItemStyles['task__button_type_delete']}`}
               onClick={() => {
-                props.onDeleteTask(props.id);
+                mainStore.tasks.deleteTask(props.id);
               }}
       />
     </li>
   )
-}
+})

@@ -9,8 +9,10 @@ import {inputsValuesInitialState} from '../../utils/constants';
 import {generateUniqueId} from '../../utils/functions';
 import {RadioButton} from '../radio-button/radio-button';
 import {TaskInputs} from '../task-inputs/task-inputs';
+import {observer} from 'mobx-react-lite';
+import mainStore from '../../stores';
 
-export const AddTaskForm: FunctionComponent<TAddTasksForm> = (props) => {
+export const AddTaskForm: FunctionComponent<TAddTasksForm> = observer((props) => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
 
   return (
@@ -40,7 +42,8 @@ export const AddTaskForm: FunctionComponent<TAddTasksForm> = (props) => {
               disabled={inputsValues.textInputValue === ''}
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
-                props.onAddTask({
+                // props.onAddTask({
+                mainStore.tasks.addNewTask({
                   id: generateUniqueId(),
                   name: inputsValues.textInputValue,
                   description: inputsValues.textAreaValue ? inputsValues.textAreaValue : undefined,
@@ -53,4 +56,4 @@ export const AddTaskForm: FunctionComponent<TAddTasksForm> = (props) => {
       </button>
     </form>
   )
-}
+})

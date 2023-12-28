@@ -9,9 +9,6 @@ export type TTask = {
 
 export type TTaskItem = TTask & {
   index: number,
-  onChangeTaskStatus: (taskId: string) => void,
-  onEditTask: (taskId: string) => void,
-  onDeleteTask: (taskId: string) => void,
   onMoveTask: (dragIndex: number, hoverIndex: number) => void
 }
 
@@ -34,8 +31,8 @@ export type TTaskInputs = {
   setTaskDescriptionValue: (e: ChangeEvent<HTMLTextAreaElement>) => void,
 }
 
-export type TPopup = TTask & {
-  // onChangeTask: () => void
-  onClosePopup: () => void,
-  onChangeTaskStatus: (taskId: string) => void,
+export type TIsDoneCheckbox = {
+  id: string,
+  checked: boolean,
+  onChange: () => void,
 }
