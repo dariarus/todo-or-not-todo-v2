@@ -12,10 +12,9 @@ import {Popup} from '../popup/popup';
 
 import mainStore from '../../stores';
 
-import {radioButtonsInitialState, taskInfoInitialState} from '../../utils/constants';
+import {radioButtonsInitialState} from '../../utils/constants';
 
 import {IRadioButtonsState} from '../../services/types/state';
-import {TTask} from '../../services/types/props';
 
 const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
@@ -89,6 +88,7 @@ const App: FunctionComponent = observer(() => {
     refreshTasksArray();
   }, [
     mainStore.tasks.fullTasksArray,
+    mainStore.tasks.showingTasksArray,
     filterRadioButtons.allIsChecked,
     filterRadioButtons.undoneIsChecked,
     filterRadioButtons.doneIsChecked
