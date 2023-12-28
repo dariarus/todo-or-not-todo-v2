@@ -11,6 +11,7 @@ import {RadioButton} from '../radio-button/radio-button';
 import {TaskInputs} from '../task-inputs/task-inputs';
 import {observer} from 'mobx-react-lite';
 import mainStore from '../../stores';
+import {Task} from '../../stores/task';
 
 export const AddTaskForm: FunctionComponent<TAddTasksForm> = observer((props) => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
@@ -50,6 +51,7 @@ export const AddTaskForm: FunctionComponent<TAddTasksForm> = observer((props) =>
                   isDone: false
                 });
                 setInputsValues(inputsValuesInitialState);
+                mainStore.tasks.setShowingTasksArray();
               }}
       >
         Добавить<br/>задачу

@@ -1,10 +1,11 @@
 import {makeAutoObservable} from 'mobx';
+import {Task} from './task';
 import {TTask} from '../services/types/props';
-
 
 export class Tasks {
   fullTasksArray: TTask[] = [];
   showingTasksArray: TTask[] = [];
+  showingTasksFilter: (task: TTask) => boolean = task => true;
 
   constructor() {
     makeAutoObservable(this);
@@ -14,8 +15,12 @@ export class Tasks {
     this.fullTasksArray = refreshedTasksArray;
   }
 
-  setShowingTasksArray(refreshedTasksArray: TTask[]) {
-    this.showingTasksArray = refreshedTasksArray;
+  setFilterTasksCallback(showingTasksFilter: (task: TTask) => boolean) {
+    this.showingTasksFilter = showingTasksFilter;
+  }
+
+  setShowingTasksArray() {
+    this.showingTasksArray = this.fullTasksArray.filter(this.showingTasksFilter)
   }
 
   addNewTask(newTask: TTask) {
@@ -27,6 +32,17 @@ export class Tasks {
       const task = this.fullTasksArray.find(task => task.id === taskId);
       if (task) {
         task.isDone = !task.isDone;
+      }
+    }
+  }
+
+  editTask(taskId: string, taskName: string, taskDescription: string | undefined, taskStatus: boolean) {
+    if (taskId) {
+      const task = this.fullTasksArray.find(task => task.id === taskId);
+      if (task) {
+        task.name = taskName;
+        task.description = taskDescription;
+        task.isDone = taskStatus;
       }
     }
   }

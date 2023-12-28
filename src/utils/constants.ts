@@ -6,7 +6,7 @@ export const radioButtonsInitialState = {
 
 export const inputsValuesInitialState = {
   textInputValue: '',
-  textAreaValue: '',
+  textAreaValue: undefined,
   isDone: false,
 };
 

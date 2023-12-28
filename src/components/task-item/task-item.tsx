@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useRef, useState} from 'react';
+import React, {FunctionComponent, useCallback, useRef, useState} from 'react';
 import {observer} from 'mobx-react-lite';
 import {DropTargetMonitor, useDrag, useDrop} from 'react-dnd';
 import {Identifier, XYCoord} from 'dnd-core';
@@ -13,6 +13,7 @@ import {TTaskItem} from '../../services/types/props';
 
 export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
   const [taskIsDone, setTaskIsDone] = useState<boolean>(props.isDone);
+
   const ref = useRef<HTMLLIElement>(null);
 
   const [{isDragging}, dragRef] = useDrag({
@@ -77,17 +78,18 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
 
   dragRef(dropRef(ref));
 
+  const handleOnChangeStatus = useCallback(() => {
+    mainStore.tasks.changeTaskStatus(props.id);
+    mainStore.tasks.setShowingTasksArray();
+  }, [props.isDone])
+
   return (
     <li ref={ref}
         data-handler-id={handlerId}
         className={isDragging ? `${taskItemStyles.task} ${taskItemStyles['task_is-dragging']}` : `${taskItemStyles.task}`}>
       <IsDoneCheckbox
-        id={mainStore.popup.openedTask.name}
-        checked={taskIsDone}
-        onChange={() => {
-          mainStore.tasks.changeTaskStatus(props.id);
-          setTaskIsDone(!taskIsDone);
-        }}/>
+        checked={props.isDone}
+        onChange={handleOnChangeStatus}/>
       {
         props.isDone
           ? <div className={`${taskItemStyles['task__item']} ${taskItemStyles['task__item_is-done']}`}>

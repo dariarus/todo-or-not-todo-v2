@@ -19,10 +19,6 @@ export type TRadioButton = {
   onClickRadio: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export type TAddTasksForm = {
-  onAddTask: (task: TTask) => void,
-}
-
 export type TTaskInputs = {
   isPopupInput: boolean,
   taskNameValue: string,
@@ -32,7 +28,7 @@ export type TTaskInputs = {
 }
 
 export type TIsDoneCheckbox = {
-  id: string,
   checked: boolean,
   onChange: () => void,
+  labelId?: string,
 }

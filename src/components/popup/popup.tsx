@@ -1,4 +1,12 @@
-import React, {ChangeEvent, FunctionComponent, useCallback, useEffect, useState} from 'react';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  FunctionComponent,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
 import {observer} from 'mobx-react-lite';
 import ReactDOM from 'react-dom';
 
@@ -15,7 +23,11 @@ import {IInputsValuesState} from '../../services/types/state';
 import {inputsValuesInitialState} from '../../utils/constants';
 
 export const Popup: FunctionComponent = observer(() => {
-  const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
+  const [inputsValues, setInputsValues] = useState<IInputsValuesState>({
+    textInputValue: mainStore.popup.openedTask.name,
+    textAreaValue: mainStore.popup.openedTask.description,
+    isDone: mainStore.popup.openedTask.isDone
+  });
   const [taskIsDone, setTaskIsDone] = useState<boolean>(mainStore.popup.openedTask.isDone);
 
   const popupRoot = document.getElementById('popup');
@@ -25,6 +37,9 @@ export const Popup: FunctionComponent = observer(() => {
       mainStore.popup.setPopupIsClosed()
     }
   }, [mainStore.popup.isOpened])
+
+  const handleOnEditTask = (e: MouseEventHandler<HTMLButtonElement>) => {
+  }
 
   useEffect(() => {
     document.addEventListener("keydown", handleEscClose)
@@ -43,11 +58,11 @@ export const Popup: FunctionComponent = observer(() => {
             </button>
             <h3 className={`${popupStyles['popup__text']} ${popupStyles['popup__text_heading']}`}>Редактировать
               задачу</h3>
-            <form className={popupStyles.popup__form}>
+            <form className={popupStyles.popup__form} onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}>
               <TaskInputs
                 isPopupInput={true}
-                taskNameValue={mainStore.popup.openedTask.name}
-                taskDescriptionValue={mainStore.popup.openedTask.description}
+                taskNameValue={inputsValues.textInputValue}
+                taskDescriptionValue={inputsValues.textAreaValue}
                 setTaskNameValue={(e: ChangeEvent<HTMLInputElement>) => {
                   setInputsValues({
                     ...inputsValues,
@@ -63,25 +78,41 @@ export const Popup: FunctionComponent = observer(() => {
               />
               <div className={popupStyles['popup__checkbox-wrap']}>
                 <IsDoneCheckbox
-                  id={mainStore.popup.openedTask.name}
-                  checked={taskIsDone}
+                  labelId={mainStore.popup.openedTask.name}
+                  checked={inputsValues.isDone}
                   onChange={() => {
-                    mainStore.tasks.changeTaskStatus(mainStore.popup.openedTask.id);
-                    setTaskIsDone(!taskIsDone)
+                    // mainStore.tasks.changeTaskStatus(mainStore.popup.openedTask.id);
+                    setInputsValues({
+                      ...inputsValues,
+                      isDone: !inputsValues.isDone
+                    })
                   }}/>
-                <label htmlFor={mainStore.popup.openedTask.name} className={popupStyles['popup__checkbox-label']}>Задача выполнена</label>
+                <label htmlFor={mainStore.popup.openedTask.name} className={popupStyles['popup__checkbox-label']}>Задача
+                  выполнена</label>
               </div>
               <div className={popupStyles['popup__buttons-wrap']}>
                 <button
                   type="submit"
                   className={`${popupStyles.popup__button} ${popupStyles.popup__button_type_save}`}
-                  onClick={() => console.log('hi')}
-                >Сохранить</button>
+                  onClick={() => {
+                    mainStore.tasks.editTask(
+                      mainStore.popup.openedTask.id,
+                      inputsValues.textInputValue,
+                      inputsValues.textAreaValue,
+                      inputsValues.isDone);
+                    mainStore.tasks.setShowingTasksArray();
+                    mainStore.popup.setPopupIsClosed();
+                  }}
+                >
+                  Сохранить
+                </button>
                 <button
                   type="submit"
                   className={`${popupStyles.popup__button} ${popupStyles.popup__button_type_cancel}`}
                   onClick={() => mainStore.popup.setPopupIsClosed()}
-                >Отменить</button>
+                >
+                  Отменить
+                </button>
               </div>
             </form>
           </div>

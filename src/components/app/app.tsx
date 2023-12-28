@@ -21,33 +21,18 @@ const App: FunctionComponent = observer(() => {
 
   const refreshTasksArray = () => {
     if (filterRadioButtons.allIsChecked) {
-      // setShowingArray(tasksArray);
-      mainStore.tasks.setShowingTasksArray(mainStore.tasks.fullTasksArray);
+      // 1). Через стейт задаем коллбэк, по условию которого будут фильтроваться задачи: все/невып./вып.
+      mainStore.tasks.setFilterTasksCallback(task => true);
+      // 2). В стейте же после того, как определились с коллбэком, фильтруем по нему сами задачи
+      mainStore.tasks.setShowingTasksArray();
     } else if (filterRadioButtons.undoneIsChecked) {
-      const filteredUndoneTasksArray = mainStore.tasks.fullTasksArray.filter(task => !task.isDone);
-      // setShowingArray(filteredUndoneTasksArray);
-      mainStore.tasks.setShowingTasksArray(filteredUndoneTasksArray);
+      mainStore.tasks.setFilterTasksCallback(task => !task.isDone);
+      mainStore.tasks.setShowingTasksArray();
     } else {
-      const filteredDoneTasksArray = mainStore.tasks.fullTasksArray.filter(task => task.isDone);
-      // setShowingArray(filteredDoneTasksArray);
-      mainStore.tasks.setShowingTasksArray(filteredDoneTasksArray);
+      mainStore.tasks.setFilterTasksCallback(task => task.isDone);
+      mainStore.tasks.setShowingTasksArray();
     }
   }
-
-  // const handleOnChangeTask = (taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) => {
-  //   let copiedTasks = tasksArray.map(task => {
-  //     return {...task}
-  //   });
-  //   if (taskId) {
-  //     const task = copiedTasks.find(task => task.id === taskId);
-  //     if (task) {
-  //       task.name = taskName;
-  //       task.description = taskDescription;
-  //       task.isDone = isDone;
-  //     }
-  //   }
-  //   setTasksArray(copiedTasks);
-  // }
 
   const handleOnMoveTask = useCallback((dragIndex: number, hoverIndex: number) => {
     /* Перемещаем элементы в массиве mainStore.tasks.showingTasksArray, отображаемом в зависимости от выбранной сортировки задач,
@@ -66,7 +51,7 @@ const App: FunctionComponent = observer(() => {
     updatedShowingArray[hoverIndex] = dragItem;
 
     // setShowingArray(updatedShowingArray);
-    mainStore.tasks.setShowingTasksArray(updatedShowingArray);
+    // mainStore.tasks.setShowingTasksArray(updatedShowingArray);
 
     // Перемещаем элементы в основном массиве mainStore.tasks.fullTasksArray на основе его индексов
     const updatedTasksArray = [...mainStore.tasks.fullTasksArray];
@@ -82,13 +67,13 @@ const App: FunctionComponent = observer(() => {
     }
 
     mainStore.tasks.setFullTasksArray(updatedTasksArray);
+    mainStore.tasks.setShowingTasksArray();
   }, [mainStore.tasks.fullTasksArray, mainStore.tasks.showingTasksArray])
 
   useEffect(() => {
     refreshTasksArray();
   }, [
     mainStore.tasks.fullTasksArray,
-    mainStore.tasks.showingTasksArray,
     filterRadioButtons.allIsChecked,
     filterRadioButtons.undoneIsChecked,
     filterRadioButtons.doneIsChecked
@@ -104,7 +89,7 @@ const App: FunctionComponent = observer(() => {
         {/*2). Работает, так как прокинут контекст в сам коллбэк (task: TTask) => ...*/}
         {/*<AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
         {/*3). Но можно вообще без пропсов, а вызвать addTask прямо в месте выполнения. Тогда нет проблем с контекстом*/}
-        <AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>
+        <AddTaskForm />
         <div className={appStyles['todos-board__tasks-wrap']}>
           <div className={appStyles['radio-button-wrap']}>
             <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
@@ -114,6 +99,7 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: false,
                              doneIsChecked: false
                            });
+                           // refreshTasksArray()
                          }}/>
             <RadioButton label="Невыполненные" value="undone" isChecked={filterRadioButtons.undoneIsChecked}
                          onClickRadio={() => {
@@ -122,6 +108,7 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: true,
                              doneIsChecked: false
                            });
+                           // refreshTasksArray()
                          }}/>
             <RadioButton label="Выполненные" value="done" isChecked={filterRadioButtons.doneIsChecked}
                          onClickRadio={() => {
@@ -130,6 +117,7 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: false,
                              doneIsChecked: true
                            });
+                           // refreshTasksArray()
                          }}/>
           </div>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
@@ -161,8 +149,7 @@ const App: FunctionComponent = observer(() => {
         <Popup/>
       }
     </main>
-  )
-    ;
+  );
 })
 
 export default App;
