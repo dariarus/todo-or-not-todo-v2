@@ -14,13 +14,13 @@ export class Popup {
     makeAutoObservable(this);
   }
 
-  setPopupIsOpened(taskId: string, taskName: string, taskDescription: string | undefined, taskStatus: boolean) {
+  setPopupIsOpened(taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) {
     this.isOpened = true;
     this.openedTask = {
       id: taskId,
       name: taskName,
       description: taskDescription,
-      isDone: taskStatus,
+      isDone: isDone,
     }
   }
 

@@ -78,9 +78,8 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
 
   dragRef(dropRef(ref));
 
-  const handleOnChangeStatus = useCallback(() => {
-    mainStore.tasks.changeTaskStatus(props.id);
-    mainStore.tasks.setShowingTasksArray();
+  const handleOnChangeIsDone = useCallback(() => {
+    mainStore.tasks.changeTaskIsDone(props.id);
   }, [props.isDone])
 
   return (
@@ -89,7 +88,7 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
         className={isDragging ? `${taskItemStyles.task} ${taskItemStyles['task_is-dragging']}` : `${taskItemStyles.task}`}>
       <IsDoneCheckbox
         checked={props.isDone}
-        onChange={handleOnChangeStatus}/>
+        onChange={handleOnChangeIsDone}/>
       {
         props.isDone
           ? <div className={`${taskItemStyles['task__item']} ${taskItemStyles['task__item_is-done']}`}>

@@ -81,7 +81,6 @@ export const Popup: FunctionComponent = observer(() => {
                   labelId={mainStore.popup.openedTask.name}
                   checked={inputsValues.isDone}
                   onChange={() => {
-                    // mainStore.tasks.changeTaskStatus(mainStore.popup.openedTask.id);
                     setInputsValues({
                       ...inputsValues,
                       isDone: !inputsValues.isDone
@@ -100,7 +99,6 @@ export const Popup: FunctionComponent = observer(() => {
                       inputsValues.textInputValue,
                       inputsValues.textAreaValue,
                       inputsValues.isDone);
-                    mainStore.tasks.setShowingTasksArray();
                     mainStore.popup.setPopupIsClosed();
                   }}
                 >

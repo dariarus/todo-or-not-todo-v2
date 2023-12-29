@@ -1,5 +1,4 @@
 import {makeAutoObservable} from 'mobx';
-import {Task} from './task';
 import {TTask} from '../services/types/props';
 
 export class Tasks {
@@ -27,24 +26,26 @@ export class Tasks {
     this.fullTasksArray.push(newTask);
   }
 
-  changeTaskStatus(taskId: string) {
+  changeTaskIsDone(taskId: string) {
     if (taskId) {
       const task = this.fullTasksArray.find(task => task.id === taskId);
       if (task) {
         task.isDone = !task.isDone;
       }
     }
+    this.setShowingTasksArray();
   }
 
-  editTask(taskId: string, taskName: string, taskDescription: string | undefined, taskStatus: boolean) {
+  editTask(taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) {
     if (taskId) {
       const task = this.fullTasksArray.find(task => task.id === taskId);
       if (task) {
         task.name = taskName;
         task.description = taskDescription;
-        task.isDone = taskStatus;
+        task.isDone = isDone;
       }
     }
+    this.setShowingTasksArray();
   }
 
   deleteTask(taskId: string) {
@@ -58,5 +59,6 @@ export class Tasks {
         this.fullTasksArray.splice(taskIndex, 1);
       }
     }
+    this.setShowingTasksArray();
   }
 }

@@ -50,9 +50,6 @@ const App: FunctionComponent = observer(() => {
     updatedShowingArray[dragIndex] = hoverItem;
     updatedShowingArray[hoverIndex] = dragItem;
 
-    // setShowingArray(updatedShowingArray);
-    // mainStore.tasks.setShowingTasksArray(updatedShowingArray);
-
     // Перемещаем элементы в основном массиве mainStore.tasks.fullTasksArray на основе его индексов
     const updatedTasksArray = [...mainStore.tasks.fullTasksArray];
 
@@ -99,7 +96,6 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: false,
                              doneIsChecked: false
                            });
-                           // refreshTasksArray()
                          }}/>
             <RadioButton label="Невыполненные" value="undone" isChecked={filterRadioButtons.undoneIsChecked}
                          onClickRadio={() => {
@@ -108,7 +104,6 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: true,
                              doneIsChecked: false
                            });
-                           // refreshTasksArray()
                          }}/>
             <RadioButton label="Выполненные" value="done" isChecked={filterRadioButtons.doneIsChecked}
                          onClickRadio={() => {
@@ -117,7 +112,6 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: false,
                              doneIsChecked: true
                            });
-                           // refreshTasksArray()
                          }}/>
           </div>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
