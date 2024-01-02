@@ -41,6 +41,11 @@ export class Tasks {
       const task = this.fullTasksArray.find(task => task.id === taskId);
       if (task) {
         task.isDone = !task.isDone;
+        if (task.isDone) {
+          task.closeDate = new Date();
+        } else {
+          task.closeDate = null;
+        }
       }
     }
     this.setShowingTasksArray();

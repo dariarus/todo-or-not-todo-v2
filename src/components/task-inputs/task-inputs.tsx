@@ -12,7 +12,7 @@ export const TaskInputs: FunctionComponent<TTaskInputs> = (props) => {
         <input type="checkbox"
                id="isImportant"
                disabled={props.isDisabled}
-               checked={props.isStatusCheckboxChecked}
+               checked={props.isStatusCheckboxChecked} // для сброса состояния после добавления задачи
                className={taskInputsStyles.checkbox}
                onChange={props.setTaskStatus}
         />

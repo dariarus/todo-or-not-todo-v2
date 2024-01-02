@@ -82,10 +82,25 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
     mainStore.tasks.changeTaskIsDone(props.id);
   }, [props.isDone])
 
+  // const dateText = props.
+
   return (
     <li ref={ref}
         data-handler-id={handlerId}
         className={isDragging ? `${taskItemStyles.task} ${taskItemStyles['task_is-dragging']}` : `${taskItemStyles.task}`}>
+      {
+        props.isDone
+          ? <p className={
+            `${taskItemStyles['task__text']} 
+        ${taskItemStyles['task__text_paragraph']} 
+        ${taskItemStyles['task__date']}`
+          }>Выполнена {props.closeDate?.toLocaleDateString('ru-RU')}</p>
+          : <p className={
+            `${taskItemStyles['task__text']} 
+        ${taskItemStyles['task__text_paragraph']} 
+        ${taskItemStyles['task__date']}`
+          }>Добавлена {props.createDate.toLocaleDateString('ru-RU')}</p>
+      }
       <div className={taskItemStyles['task__item-wrap']}>
         <Checkbox
           type="isDone"
@@ -134,7 +149,6 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
                   }}
           />
         </div>
-
       </div>
     </li>
   )

@@ -6,6 +6,9 @@ export type TTask = {
   description: string | undefined,
   isImportant: boolean,
   isDone: boolean,
+  createDate: Date,
+  closeDate: Date | null
+  // closeDate: Date | undefined
 }
 
 export type TTaskItem = TTask & {

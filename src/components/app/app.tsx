@@ -130,6 +130,8 @@ const App: FunctionComponent = observer(() => {
                                   description={task.description}
                                   isDone={task.isDone}
                                   isImportant={task.isImportant}
+                                  createDate={task.createDate}
+                                  closeDate={task.closeDate}
                                   onMoveTask={handleOnMoveTask}
                         />
                       )).reverse()

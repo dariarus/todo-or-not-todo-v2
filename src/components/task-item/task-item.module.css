@@ -1,5 +1,7 @@
 .task {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  /*position: relative;*/
   box-sizing: border-box;
   margin: 0 0 15px 0;
   padding: 0;
@@ -19,6 +21,7 @@
 .task__item-wrap {
   display: flex;
   align-items: center;
+  position: relative;
   box-sizing: border-box;
 }
 
@@ -60,6 +63,12 @@
   line-height: 16px;
 }
 
+.task__date {
+  /*display: block;*/
+  align-self: flex-end;
+  margin: 0 15px 5px 0;
+}
+
 .task__buttons-wrap {
   position: absolute;
   top: 50%;
@@ -68,6 +77,7 @@
   align-items: center;
   gap: 5px;
   transform: translateY(-50%);
+  cursor: initial;
 }
 
 .task__button {

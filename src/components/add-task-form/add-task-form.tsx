@@ -1,19 +1,21 @@
 import React, {ChangeEvent, MouseEvent, FunctionComponent, useState, FormEvent} from 'react';
+import {observer} from 'mobx-react-lite';
 
 import addTaskFormStyles from './add-task-form.module.css';
 
+import mainStore from '../../stores';
+
 import {IInputsValuesState} from '../../services/types/state';
+
+import {TaskInputs} from '../task-inputs/task-inputs';
 
 import {inputsValuesInitialState} from '../../utils/constants';
 import {generateUniqueId} from '../../utils/functions';
-import {RadioButton} from '../radio-button/radio-button';
-import {TaskInputs} from '../task-inputs/task-inputs';
-import {observer} from 'mobx-react-lite';
-import mainStore from '../../stores';
-import taskInputsStyles from '../task-inputs/task-inputs.module.css';
 
 export const AddTaskForm: FunctionComponent = observer(() => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
+
+  const createDate = new Date();
 
   return (
     <form className={addTaskFormStyles.form}
@@ -56,6 +58,9 @@ export const AddTaskForm: FunctionComponent = observer(() => {
                   description: inputsValues.textAreaValue ? inputsValues.textAreaValue : undefined,
                   isImportant: inputsValues.isImportant,
                   isDone: false,
+                  createDate: createDate,
+                  closeDate: null
+                  // closeDate: undefined
                 });
                 setInputsValues(inputsValuesInitialState);
                 mainStore.tasks.setShowingTasksArray();
