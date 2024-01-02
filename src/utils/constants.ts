@@ -6,13 +6,7 @@ export const radioButtonsInitialState = {
 
 export const inputsValuesInitialState = {
   textInputValue: '',
-  textAreaValue: undefined,
+  textAreaValue: '',
+  isImportant: false,
   isDone: false,
 };
-
-export const taskInfoInitialState = {
-  id: '',
-  name: '',
-  description: undefined,
-  isDone: false,
-}

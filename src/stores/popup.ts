@@ -7,6 +7,7 @@ export class Popup {
     name: '',
     description: undefined,
     isDone: false,
+    isImportant: false,
   };
   isOpened: boolean = false;
 
@@ -14,13 +15,14 @@ export class Popup {
     makeAutoObservable(this);
   }
 
-  setPopupIsOpened(taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) {
+  setPopupIsOpened(taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean, isImportant: boolean) {
     this.isOpened = true;
     this.openedTask = {
       id: taskId,
       name: taskName,
       description: taskDescription,
       isDone: isDone,
+      isImportant: isImportant
     }
   }
 
@@ -31,6 +33,7 @@ export class Popup {
       name: '',
       description: undefined,
       isDone: false,
+      isImportant: false,
     }
   }
 }

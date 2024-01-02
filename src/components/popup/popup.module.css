@@ -55,10 +55,17 @@
   width: 100%;
 }
 
+.popup__checkboxes-wrap {
+  display: flex;
+  align-items: center;
+  /*justify-content: space-between;*/
+  gap: 50px;
+  margin-top: 20px;
+}
+
 .popup__checkbox-wrap {
   display: flex;
   align-items: center;
-  margin-top: 20px;
 }
 
 .popup__checkbox-label {
@@ -68,10 +75,6 @@
   line-height: 22px;
   color: #000;
   cursor: pointer;
-}
-
-.popup__checkbox:checked + .popup__checkbox-label {
-  color: #00996f;
 }
 
 .popup__buttons-wrap {

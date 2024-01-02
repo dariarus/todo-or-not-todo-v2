@@ -9,6 +9,7 @@
 }
 
 .todos-board {
+  /*box-sizing: border-box;*/
   width: 100%;
   border-top: 1px solid rgba(171, 177, 193, .5); /* #abb1c1 */
   border-left: 1px solid rgba(171, 177, 193, .5);
@@ -42,6 +43,7 @@
 .todos-board__tasks-list-wrap {
   display: flex;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .todos-board__tasks-list {

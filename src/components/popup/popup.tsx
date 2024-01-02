@@ -14,7 +14,7 @@ import popupStyles from './popup.module.css';
 
 import {Overlay} from '../overlay/overlay';
 import {TaskInputs} from '../task-inputs/task-inputs';
-import {IsDoneCheckbox} from '../is-done-checkbox/is-done-checkbox';
+import {Checkbox} from '../checkbox/checkbox';
 
 import mainStore from '../../stores';
 
@@ -26,9 +26,9 @@ export const Popup: FunctionComponent = observer(() => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>({
     textInputValue: mainStore.popup.openedTask.name,
     textAreaValue: mainStore.popup.openedTask.description,
-    isDone: mainStore.popup.openedTask.isDone
+    isDone: mainStore.popup.openedTask.isDone,
+    isImportant: mainStore.popup.openedTask.isImportant
   });
-  const [taskIsDone, setTaskIsDone] = useState<boolean>(mainStore.popup.openedTask.isDone);
 
   const popupRoot = document.getElementById('popup');
 
@@ -69,6 +69,12 @@ export const Popup: FunctionComponent = observer(() => {
                     textInputValue: e.target.value
                   })
                 }}
+                setTaskStatus={() => {
+                  setInputsValues({
+                    ...inputsValues,
+                    isImportant: !inputsValues.isImportant
+                  })
+                }}
                 setTaskDescriptionValue={(e: ChangeEvent<HTMLTextAreaElement>) => {
                   setInputsValues({
                     ...inputsValues,
@@ -76,18 +82,34 @@ export const Popup: FunctionComponent = observer(() => {
                   })
                 }}
               />
-              <div className={popupStyles['popup__checkbox-wrap']}>
-                <IsDoneCheckbox
-                  labelId={mainStore.popup.openedTask.name}
-                  checked={inputsValues.isDone}
-                  onChange={() => {
-                    setInputsValues({
-                      ...inputsValues,
-                      isDone: !inputsValues.isDone
-                    })
-                  }}/>
-                <label htmlFor={mainStore.popup.openedTask.name} className={popupStyles['popup__checkbox-label']}>Задача
-                  выполнена</label>
+              <div className={popupStyles['popup__checkboxes-wrap']}>
+                <div className={popupStyles['popup__checkbox-wrap']}>
+                  <Checkbox
+                    labelId="isDone"
+                    type="isDone"
+                    checked={inputsValues.isDone}
+                    onChange={() => {
+                      setInputsValues({
+                        ...inputsValues,
+                        isDone: !inputsValues.isDone
+                      })
+                    }}/>
+                  <label htmlFor="isDone" className={popupStyles['popup__checkbox-label']}>Задача
+                    выполнена</label>
+                </div>
+                <div className={popupStyles['popup__checkbox-wrap']}>
+                  <Checkbox
+                    labelId="isImportant"
+                    type="isImportant"
+                    checked={inputsValues.isImportant}
+                    onChange={() => {
+                      setInputsValues({
+                        ...inputsValues,
+                        isImportant: !inputsValues.isImportant
+                      })
+                    }}/>
+                  <label htmlFor="isImportant" className={popupStyles['popup__checkbox-label']}>Важная</label>
+                </div>
               </div>
               <div className={popupStyles['popup__buttons-wrap']}>
                 <button
@@ -98,7 +120,8 @@ export const Popup: FunctionComponent = observer(() => {
                       mainStore.popup.openedTask.id,
                       inputsValues.textInputValue,
                       inputsValues.textAreaValue,
-                      inputsValues.isDone);
+                      inputsValues.isDone,
+                      inputsValues.isImportant);
                     mainStore.popup.setPopupIsClosed();
                   }}
                 >

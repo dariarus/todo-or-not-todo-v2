@@ -4,6 +4,7 @@ export type TTask = {
   id: string,
   name: string,
   description: string | undefined,
+  isImportant: boolean,
   isDone: boolean,
 }
 
@@ -23,11 +24,15 @@ export type TTaskInputs = {
   isPopupInput: boolean,
   taskNameValue: string,
   taskDescriptionValue: string | undefined,
+  isDisabled?: boolean,
+  isStatusCheckboxChecked?: boolean,
   setTaskNameValue: (e: ChangeEvent<HTMLInputElement>) => void,
+  setTaskStatus: () => void,
   setTaskDescriptionValue: (e: ChangeEvent<HTMLTextAreaElement>) => void,
 }
 
 export type TIsDoneCheckbox = {
+  type: 'isDone' | 'isImportant',
   checked: boolean,
   onChange: () => void,
   labelId?: string,

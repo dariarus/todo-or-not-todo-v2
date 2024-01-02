@@ -3,7 +3,6 @@ import React, {ChangeEvent, MouseEvent, FunctionComponent, useState, FormEvent} 
 import addTaskFormStyles from './add-task-form.module.css';
 
 import {IInputsValuesState} from '../../services/types/state';
-import {TAddTasksForm} from '../../services/types/props';
 
 import {inputsValuesInitialState} from '../../utils/constants';
 import {generateUniqueId} from '../../utils/functions';
@@ -11,9 +10,9 @@ import {RadioButton} from '../radio-button/radio-button';
 import {TaskInputs} from '../task-inputs/task-inputs';
 import {observer} from 'mobx-react-lite';
 import mainStore from '../../stores';
-import {Task} from '../../stores/task';
+import taskInputsStyles from '../task-inputs/task-inputs.module.css';
 
-export const AddTaskForm: FunctionComponent<TAddTasksForm> = observer((props) => {
+export const AddTaskForm: FunctionComponent = observer(() => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
 
   return (
@@ -26,10 +25,18 @@ export const AddTaskForm: FunctionComponent<TAddTasksForm> = observer((props) =>
         isPopupInput={false}
         taskNameValue={inputsValues.textInputValue}
         taskDescriptionValue={inputsValues.textAreaValue}
+        isDisabled={inputsValues.textInputValue === ''}
+        isStatusCheckboxChecked={inputsValues.isImportant}
         setTaskNameValue={(e: ChangeEvent<HTMLInputElement>) => {
           setInputsValues({
             ...inputsValues,
             textInputValue: e.target.value
+          })
+        }}
+        setTaskStatus={() => {
+          setInputsValues({
+            ...inputsValues,
+            isImportant: !inputsValues.isImportant
           })
         }}
         setTaskDescriptionValue={(e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -43,12 +50,12 @@ export const AddTaskForm: FunctionComponent<TAddTasksForm> = observer((props) =>
               disabled={inputsValues.textInputValue === ''}
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
-                // props.onAddTask({
                 mainStore.tasks.addNewTask({
                   id: generateUniqueId(),
                   name: inputsValues.textInputValue,
                   description: inputsValues.textAreaValue ? inputsValues.textAreaValue : undefined,
-                  isDone: false
+                  isImportant: inputsValues.isImportant,
+                  isDone: false,
                 });
                 setInputsValues(inputsValuesInitialState);
                 mainStore.tasks.setShowingTasksArray();

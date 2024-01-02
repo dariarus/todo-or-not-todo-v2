@@ -80,6 +80,7 @@ const App: FunctionComponent = observer(() => {
     <main className={appStyles.main}>
       <h1 className={appStyles['todos-board__heading']}>Мои задачи</h1>
       <div className={appStyles['todos-board']}>
+
         {/*1). Не работает, так как прокинута ссылка на ф-цию, без контекста.
         Т.е. в месте вызова не будет объявлена переменная this.fullTasksArray, и поэтому падает в ошибку this.fullTasksArray - undefined */}
         {/*<AddTaskForm onAddTask={mainStore.tasks.addNewTask}/>*/}
@@ -87,6 +88,7 @@ const App: FunctionComponent = observer(() => {
         {/*<AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
         {/*3). Но можно вообще без пропсов, а вызвать addTask прямо в месте выполнения. Тогда нет проблем с контекстом*/}
         <AddTaskForm />
+
         <div className={appStyles['todos-board__tasks-wrap']}>
           <div className={appStyles['radio-button-wrap']}>
             <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
@@ -127,6 +129,7 @@ const App: FunctionComponent = observer(() => {
                                   name={task.name}
                                   description={task.description}
                                   isDone={task.isDone}
+                                  isImportant={task.isImportant}
                                   onMoveTask={handleOnMoveTask}
                         />
                       )).reverse()

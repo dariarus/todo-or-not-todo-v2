@@ -26,6 +26,16 @@ export class Tasks {
     this.fullTasksArray.push(newTask);
   }
 
+  changeTaskStatus(taskId: string) {
+    if (taskId) {
+      const task = this.fullTasksArray.find(task => task.id === taskId);
+      if (task) {
+        task.isImportant = !task.isImportant;
+      }
+    }
+    this.setShowingTasksArray();
+  }
+
   changeTaskIsDone(taskId: string) {
     if (taskId) {
       const task = this.fullTasksArray.find(task => task.id === taskId);
@@ -36,13 +46,14 @@ export class Tasks {
     this.setShowingTasksArray();
   }
 
-  editTask(taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean) {
+  editTask(taskId: string, taskName: string, taskDescription: string | undefined, isDone: boolean, isImportant: boolean) {
     if (taskId) {
       const task = this.fullTasksArray.find(task => task.id === taskId);
       if (task) {
         task.name = taskName;
         task.description = taskDescription;
         task.isDone = isDone;
+        task.isImportant = isImportant;
       }
     }
     this.setShowingTasksArray();

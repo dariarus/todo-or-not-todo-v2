@@ -7,5 +7,6 @@ export interface IRadioButtonsState {
 export interface IInputsValuesState {
   textInputValue: string,
   textAreaValue: string | undefined,
+  isImportant: boolean,
   isDone: boolean,
 }
