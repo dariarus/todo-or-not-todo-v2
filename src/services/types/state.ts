@@ -10,3 +10,9 @@ export interface IInputsValuesState {
   isImportant: boolean,
   isDone: boolean,
 }
+
+export enum TaskCompletion {
+  ALL = 'all',
+  UNDONE = 'undone',
+  DONE = 'done'
+}

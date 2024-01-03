@@ -14,25 +14,11 @@ import mainStore from '../../stores';
 
 import {radioButtonsInitialState} from '../../utils/constants';
 
-import {IRadioButtonsState} from '../../services/types/state';
+import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
+import {SearchForm} from '../search-form/search-form';
 
 const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
-
-  const refreshTasksArray = () => {
-    if (filterRadioButtons.allIsChecked) {
-      // 1). Через стейт задаем коллбэк, по условию которого будут фильтроваться задачи: все/невып./вып.
-      mainStore.tasks.setFilterTasksCallback(task => true);
-      // 2). В стейте же после того, как определились с коллбэком, фильтруем по нему сами задачи
-      mainStore.tasks.setShowingTasksArray();
-    } else if (filterRadioButtons.undoneIsChecked) {
-      mainStore.tasks.setFilterTasksCallback(task => !task.isDone);
-      mainStore.tasks.setShowingTasksArray();
-    } else {
-      mainStore.tasks.setFilterTasksCallback(task => task.isDone);
-      mainStore.tasks.setShowingTasksArray();
-    }
-  }
 
   const handleOnMoveTask = useCallback((dragIndex: number, hoverIndex: number) => {
     /* Перемещаем элементы в массиве mainStore.tasks.showingTasksArray, отображаемом в зависимости от выбранной сортировки задач,
@@ -68,7 +54,7 @@ const App: FunctionComponent = observer(() => {
   }, [mainStore.tasks.fullTasksArray, mainStore.tasks.showingTasksArray])
 
   useEffect(() => {
-    refreshTasksArray();
+    mainStore.tasks.setShowingTasksArray();
   }, [
     mainStore.tasks.fullTasksArray,
     filterRadioButtons.allIsChecked,
@@ -90,6 +76,7 @@ const App: FunctionComponent = observer(() => {
         <AddTaskForm />
 
         <div className={appStyles['todos-board__tasks-wrap']}>
+          <SearchForm/>
           <div className={appStyles['radio-button-wrap']}>
             <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
                          onClickRadio={() => {
@@ -98,6 +85,7 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: false,
                              doneIsChecked: false
                            });
+                           mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.ALL)
                          }}/>
             <RadioButton label="Невыполненные" value="undone" isChecked={filterRadioButtons.undoneIsChecked}
                          onClickRadio={() => {
@@ -106,6 +94,7 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: true,
                              doneIsChecked: false
                            });
+                           mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.UNDONE)
                          }}/>
             <RadioButton label="Выполненные" value="done" isChecked={filterRadioButtons.doneIsChecked}
                          onClickRadio={() => {
@@ -114,6 +103,7 @@ const App: FunctionComponent = observer(() => {
                              undoneIsChecked: false,
                              doneIsChecked: true
                            });
+                           mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.DONE)
                          }}/>
           </div>
           <div className={appStyles['todos-board__tasks-list-wrap']}>

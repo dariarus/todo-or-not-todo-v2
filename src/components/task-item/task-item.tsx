@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useCallback, useRef, useState} from 'react';
+import React, {FunctionComponent, useCallback, useRef} from 'react';
 import {observer} from 'mobx-react-lite';
 import {DropTargetMonitor, useDrag, useDrop} from 'react-dnd';
 import {Identifier, XYCoord} from 'dnd-core';
@@ -82,8 +82,6 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
     mainStore.tasks.changeTaskIsDone(props.id);
   }, [props.isDone])
 
-  // const dateText = props.
-
   return (
     <li ref={ref}
         data-handler-id={handlerId}
@@ -99,7 +97,7 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
             `${taskItemStyles['task__text']} 
         ${taskItemStyles['task__text_paragraph']} 
         ${taskItemStyles['task__date']}`
-          }>Добавлена {props.createDate.toLocaleDateString('ru-RU')}</p>
+          }>Добавлена {props.createDate?.toLocaleDateString('ru-RU')}</p>
       }
       <div className={taskItemStyles['task__item-wrap']}>
         <Checkbox
@@ -113,15 +111,23 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
                 className={`${taskItemStyles['task__text']} ${taskItemStyles['task__text_heading']} ${taskItemStyles['task__text_crossed']}`}>
                 {props.name}
               </p>
-              <p
-                className={`${taskItemStyles['task__text']} ${taskItemStyles['task__text_paragraph']} ${taskItemStyles['task__text_crossed']}`}>
-                {props.description}
-              </p>
+              {
+                props.description &&
+                <p
+                  className={`${taskItemStyles['task__text']} ${taskItemStyles['task__text_paragraph']} ${taskItemStyles['task__text_crossed']}`}>
+                  {props.description}
+                </p>
+              }
             </div>
             : <div className={taskItemStyles['task__item']}>
               <p className={`${taskItemStyles['task__text']} ${taskItemStyles['task__text_heading']}`}>{props.name}</p>
-              <p
-                className={`${taskItemStyles['task__text']} ${taskItemStyles['task__text_paragraph']}`}>{props.description}</p>
+              {
+                props.description &&
+                <p
+                  className={`${taskItemStyles['task__text']} ${taskItemStyles['task__text_paragraph']}`}>
+                  {props.description}
+                </p>
+              }
             </div>
         }
         <div className={taskItemStyles['task__buttons-wrap']}>

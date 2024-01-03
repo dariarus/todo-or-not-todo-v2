@@ -27,6 +27,9 @@
 
 
 .task__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   box-sizing: border-box;
   padding: 10px 110px 10px 20px;
   width: 100%;
@@ -53,12 +56,12 @@
 }
 
 .task__text_heading {
-  margin-bottom: 5px;
   font-size: 20px;
   line-height: 22px;
 }
 
 .task__text_paragraph {
+  margin-top: 5px;
   font-size: 14px;
   line-height: 16px;
 }

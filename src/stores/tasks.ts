@@ -1,10 +1,12 @@
 import {makeAutoObservable} from 'mobx';
 import {TTask} from '../services/types/props';
+import {TaskCompletion} from '../services/types/state';
 
 export class Tasks {
   fullTasksArray: TTask[] = [];
   showingTasksArray: TTask[] = [];
-  showingTasksFilter: (task: TTask) => boolean = task => true;
+  taskNameFilterValue: string = '';
+  taskCompletionFilterValue: TaskCompletion = TaskCompletion.ALL;
 
   constructor() {
     makeAutoObservable(this);
@@ -14,16 +16,39 @@ export class Tasks {
     this.fullTasksArray = refreshedTasksArray;
   }
 
-  setFilterTasksCallback(showingTasksFilter: (task: TTask) => boolean) {
-    this.showingTasksFilter = showingTasksFilter;
+  addNewTask(newTask: TTask) {
+    this.fullTasksArray.push(newTask);
+  }
+
+  setTaskCompletionFilterValue(value: TaskCompletion) {
+    this.taskCompletionFilterValue = value;
+  }
+
+  setCompletionTaskFilterCondition(task: TTask) {
+    switch (this.taskCompletionFilterValue) {
+      case TaskCompletion.ALL:
+        return true;
+      case TaskCompletion.UNDONE:
+        return !task.isDone;
+      case TaskCompletion.DONE:
+        return task.isDone;
+    }
+  }
+
+  setTaskNameFilterValue(value: string) {
+    this.taskNameFilterValue = value;
+  }
+
+  setSearchTaskCondition(task: TTask) {
+    if (!this.taskNameFilterValue) {
+      return true;
+    }
+    return task.name.toLowerCase().includes(this.taskNameFilterValue) || task.description?.toLowerCase().includes(this.taskNameFilterValue)
   }
 
   setShowingTasksArray() {
-    this.showingTasksArray = this.fullTasksArray.filter(this.showingTasksFilter)
-  }
-
-  addNewTask(newTask: TTask) {
-    this.fullTasksArray.push(newTask);
+    this.showingTasksArray = this.fullTasksArray
+      .filter((task) => this.setCompletionTaskFilterCondition(task) && this.setSearchTaskCondition(task))
   }
 
   changeTaskStatus(taskId: string) {
