@@ -20,8 +20,6 @@ import mainStore from '../../stores';
 
 import {IInputsValuesState} from '../../services/types/state';
 
-import {inputsValuesInitialState} from '../../utils/constants';
-
 export const Popup: FunctionComponent = observer(() => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>({
     textInputValue: mainStore.popup.openedTask.name,
@@ -37,9 +35,6 @@ export const Popup: FunctionComponent = observer(() => {
       mainStore.popup.setPopupIsClosed()
     }
   }, [mainStore.popup.isOpened])
-
-  const handleOnEditTask = (e: MouseEventHandler<HTMLButtonElement>) => {
-  }
 
   useEffect(() => {
     document.addEventListener("keydown", handleEscClose)

@@ -103,3 +103,22 @@
   background-color: rgba(171, 177, 193, .9);
   border-radius: 50px;
 }
+
+.tooltip {
+  position: absolute;
+  top: 10px;
+  right: 5%;
+  display: none;
+  padding: 10px;
+  border: 1px solid rgba(171, 177, 193, .5);
+  border-radius: 10px;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 18px;
+  color: #848484;
+}
+
+.checkbox:hover:not(:disabled) + .tooltip {
+  display: inline-block;
+}

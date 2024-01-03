@@ -9,13 +9,18 @@ export const TaskInputs: FunctionComponent<TTaskInputs> = (props) => {
     <div className={taskInputsStyles['input-wrap']}>
       {
         !props.isPopupInput &&
-        <input type="checkbox"
-               id="isImportant"
-               disabled={props.isDisabled}
-               checked={props.isStatusCheckboxChecked} // для сброса состояния после добавления задачи
-               className={taskInputsStyles.checkbox}
-               onChange={props.setTaskStatus}
-        />
+        <>
+          <input type="checkbox"
+                 id="isImportant"
+                 disabled={props.isDisabled}
+                 checked={props.isStatusCheckboxChecked} // для сброса состояния после добавления задачи
+                 className={taskInputsStyles.checkbox}
+                 onChange={props.setTaskStatus}
+          />
+          <span className={taskInputsStyles.tooltip}>
+            Отметить задачу как важную
+          </span>
+        </>
       }
       <input type="text"
              value={props.taskNameValue}

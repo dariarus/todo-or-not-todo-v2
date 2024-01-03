@@ -59,6 +59,12 @@ export class Tasks {
         task.description = taskDescription;
         task.isDone = isDone;
         task.isImportant = isImportant;
+
+        if (task.isDone) {
+          task.closeDate = new Date();
+        } else {
+          task.closeDate = null;
+        }
       }
     }
     this.setShowingTasksArray();
