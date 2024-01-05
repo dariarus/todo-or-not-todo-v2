@@ -16,9 +16,11 @@ import {radioButtonsInitialState} from '../../utils/constants';
 
 import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
 import {SearchForm} from '../search-form/search-form';
+import {Accordion} from '../accordion/accordion';
 
 const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
+  const [accordionIsActive, setAccordionIsActive] = useState<boolean>(false);
 
   const handleOnMoveTask = useCallback((dragIndex: number, hoverIndex: number) => {
     /* Перемещаем элементы в массиве mainStore.tasks.showingTasksArray, отображаемом в зависимости от выбранной сортировки задач,
@@ -73,7 +75,7 @@ const App: FunctionComponent = observer(() => {
         {/*2). Работает, так как прокинут контекст в сам коллбэк (task: TTask) => ...*/}
         {/*<AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
         {/*3). Но можно вообще без пропсов, а вызвать addTask прямо в месте выполнения. Тогда нет проблем с контекстом*/}
-        <AddTaskForm />
+        <AddTaskForm/>
 
         <div className={appStyles['todos-board__tasks-wrap']}>
           <SearchForm/>
@@ -105,7 +107,15 @@ const App: FunctionComponent = observer(() => {
                            });
                            mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.DONE)
                          }}/>
+            {
+              mainStore.tasks.fullTasksArray.length > 0 &&
+              <button type="button"
+                      className={appStyles['radio-button-wrap__settings-button']}
+                      onClick={() => setAccordionIsActive(!accordionIsActive)}
+              />
+            }
           </div>
+          <Accordion isActive={accordionIsActive}/>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
             {
               mainStore.tasks.showingTasksArray && mainStore.tasks.showingTasksArray.length > 0

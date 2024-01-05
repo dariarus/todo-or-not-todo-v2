@@ -39,3 +39,15 @@ export type TIsDoneCheckbox = {
   onChange: () => void,
   labelId?: string,
 }
+
+export type TTooltip = {
+  tooltipStyles: string,
+  description: string,
+}
+
+export type TSortOptionRadio = {
+  id: string,
+  isChecked: boolean,
+  onClickRadio: () => void,
+  label: string,
+}

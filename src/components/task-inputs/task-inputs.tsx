@@ -3,6 +3,7 @@ import React, {FunctionComponent} from 'react';
 import taskInputsStyles from './task-inputs.module.css';
 
 import {TTaskInputs} from '../../services/types/props';
+import {Tooltip} from '../tooltip/tooltip';
 
 export const TaskInputs: FunctionComponent<TTaskInputs> = (props) => {
   return (
@@ -17,9 +18,7 @@ export const TaskInputs: FunctionComponent<TTaskInputs> = (props) => {
                  className={taskInputsStyles.checkbox}
                  onChange={props.setTaskStatus}
           />
-          <span className={taskInputsStyles.tooltip}>
-            Отметить задачу как важную
-          </span>
+          <Tooltip tooltipStyles={taskInputsStyles.tooltip} description="Отметить задачу как важную"/>
         </>
       }
       <input type="text"
