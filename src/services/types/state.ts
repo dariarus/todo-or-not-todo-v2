@@ -35,20 +35,8 @@ export enum TaskCompletion {
   DONE = 'done'
 }
 
-export enum SortingByNames {
+export enum SortingParameters {
   ALL = 'all',
-  ASC_ALPHABET = 'ascAlphabet',
-  DESC_ALPHABET = 'descAlphabet'
-}
-
-export enum SortingByImportance {
-  ALL = 'all',
-  IMPORTANT_FIRST = 'importantFirst',
-  NOT_IMPORTANT_FIRST = 'notImportantFirst'
-}
-
-export enum SortingByDate {
-  ALL = 'all',
-  NEW_FIRST = 'newFirst',
-  OLD_FIRST = 'oldFirst'
+  ASCENDING = 'ascending',
+  DESCENDING = 'descending'
 }

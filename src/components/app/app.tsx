@@ -14,7 +14,7 @@ import mainStore from '../../stores';
 
 import {radioButtonsInitialState} from '../../utils/constants';
 
-import {IRadioButtonsState, SortingByNames, TaskCompletion} from '../../services/types/state';
+import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
 import {SearchForm} from '../search-form/search-form';
 import {Accordion} from '../accordion/accordion';
 
@@ -123,7 +123,6 @@ const App: FunctionComponent = observer(() => {
               />
             }
           </div>
-          {/*<Accordion isActive={accordionIsActive}/>*/}
           <Accordion isActive={accordionIsActive}/>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
             {

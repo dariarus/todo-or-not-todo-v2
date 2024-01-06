@@ -3,131 +3,115 @@ import React, {FunctionComponent, useState} from 'react';
 import accordionStyles from './accordion.module.css';
 
 import {SortingOptionRadio} from '../sorting-option-radio/sorting-option-radio';
-import {ISortingByDateState, ISortingByImportanceState, SortingByNames} from '../../services/types/state';
-import {sortingByDateInitialState, sortingByImportanceInitialState} from '../../utils/constants';
+import {SortingParameters, TaskCompletion} from '../../services/types/state';
 import mainStore from '../../stores';
 
 export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
-  const [alphabetSortingRadio, setAlphabetSortingRadio] = useState<SortingByNames>(SortingByNames.ALL);
-  const [importanceSortingRadio, setImportanceSortingRadio] = useState<ISortingByImportanceState>(sortingByImportanceInitialState);
-  const [dateSortingRadio, setDateSortingRadio] = useState<ISortingByDateState>(sortingByDateInitialState);
+  const [alphabetSortingRadio, setAlphabetSortingRadio] = useState<SortingParameters>(SortingParameters.ALL);
+  const [importanceSortingRadio, setImportanceSortingRadio] = useState<SortingParameters>(SortingParameters.ALL);
+  const [dateSortingRadio, setDateSortingRadio] = useState<SortingParameters>(SortingParameters.ALL);
 
   return (
-    <div className={props.isActive ?
-      `${accordionStyles.accordion} ${accordionStyles['accordion_is-active']}`
-      : `${accordionStyles.accordion}`}>
-      <h3 className={`${accordionStyles['accordion__text']} ${accordionStyles['accordion__text_heading']}`}>Сортировать
+    <div className={
+      props.isActive && mainStore.tasks.fullTasksArray.length > 0
+        ? `${accordionStyles.accordion} ${accordionStyles['accordion_is-active']}`
+        : `${accordionStyles.accordion}`}>
+      <h3
+        className={`${accordionStyles['accordion__text']} ${accordionStyles['accordion__text_heading']}`}>Сортировать
         задачи</h3>
       <form className={accordionStyles.form}>
         <fieldset className={accordionStyles.fieldset}>
-          <legend className={accordionStyles.legend}>По названию/описанию</legend>
+          <legend className={accordionStyles.legend}>По названию</legend>
           <SortingOptionRadio id="allNames"
-                              // isChecked={alphabetSortingRadio.all}
-                              isChecked={alphabetSortingRadio === SortingByNames.ALL}
+                              isChecked={alphabetSortingRadio === SortingParameters.ALL}
                               inputName="tasksNames"
                               label="Не сортировать"
                               onClickRadio={() => {
-                                setAlphabetSortingRadio(SortingByNames.ALL);
-                                // mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingByNames.ALL);
+                                setAlphabetSortingRadio(SortingParameters.ALL);
+                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.ALL)
                                 mainStore.tasks.setShowingTasksArray();
                               }}
           />
           <SortingOptionRadio id="ascAlphabet"
-                              // isChecked={alphabetSortingRadio.ascendingAlphabet}
-                              isChecked={alphabetSortingRadio === SortingByNames.ASC_ALPHABET}
+                              isChecked={alphabetSortingRadio === SortingParameters.ASCENDING}
                               inputName="tasksNames"
                               label="А &#8594; Я"
                               onClickRadio={() => {
-                                setAlphabetSortingRadio(SortingByNames.ASC_ALPHABET);
-                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingByNames.ASC_ALPHABET)
+                                setAlphabetSortingRadio(SortingParameters.ASCENDING);
+                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING)
                               }}
           />
           <SortingOptionRadio id="descAlphabet"
-                              // isChecked={alphabetSortingRadio.descendingAlphabet}
-                              isChecked={alphabetSortingRadio === SortingByNames.DESC_ALPHABET}
+                              isChecked={alphabetSortingRadio === SortingParameters.DESCENDING}
                               inputName="tasksNames"
                               label="Я &#8594; А"
                               onClickRadio={() => {
-                                setAlphabetSortingRadio(SortingByNames.DESC_ALPHABET);
-                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingByNames.DESC_ALPHABET)
+                                setAlphabetSortingRadio(SortingParameters.DESCENDING);
+                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING)
                               }}
           />
         </fieldset>
         <fieldset className={accordionStyles.fieldset}>
           <legend className={accordionStyles.legend}>По важности</legend>
           <SortingOptionRadio id="allTasks"
-                              isChecked={importanceSortingRadio.all}
+                              isChecked={importanceSortingRadio === SortingParameters.ALL}
                               inputName="tasksImportance"
                               label="Не сортировать"
                               onClickRadio={() => {
-                                setImportanceSortingRadio({
-                                  all: true,
-                                  importantFirst: false,
-                                  notImportantFirst: false
-                                })
+                                setImportanceSortingRadio(SortingParameters.ALL);
+                                mainStore.sortOptions.sortByImportance(mainStore.tasks.showingTasksArray, SortingParameters.ALL);
+                                mainStore.tasks.setShowingTasksArray();
                               }}
           />
           <SortingOptionRadio id="important"
-                              isChecked={importanceSortingRadio.importantFirst}
+                              isChecked={importanceSortingRadio === SortingParameters.ASCENDING}
                               inputName="tasksImportance"
                               label="Сначала важные"
                               onClickRadio={() => {
-                                setImportanceSortingRadio({
-                                  all: false,
-                                  importantFirst: true,
-                                  notImportantFirst: false
-                                })
+                                setImportanceSortingRadio(SortingParameters.ASCENDING);
+                                mainStore.sortOptions.sortByImportance(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING);
                               }}
           />
           <SortingOptionRadio id="notImportant"
-                              isChecked={importanceSortingRadio.notImportantFirst}
+                              isChecked={importanceSortingRadio === SortingParameters.DESCENDING}
                               inputName="tasksImportance"
                               label="Сначала неважные"
                               onClickRadio={() => {
-                                setImportanceSortingRadio({
-                                  all: false,
-                                  importantFirst: false,
-                                  notImportantFirst: true
-                                })
+                                setImportanceSortingRadio(SortingParameters.DESCENDING);
+                                mainStore.sortOptions.sortByImportance(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING);
                               }}
           />
         </fieldset>
         <fieldset className={accordionStyles.fieldset}>
-          <legend className={accordionStyles.legend}>По дате</legend>
+          <legend className={accordionStyles.legend}>По
+            дате {mainStore.tasks.taskCompletionFilterValue === TaskCompletion.DONE
+              ? 'выполнения' : 'добавления'}</legend>
           <SortingOptionRadio id="allDates"
-                              isChecked={dateSortingRadio.all}
+                              isChecked={dateSortingRadio === SortingParameters.ALL}
                               inputName="tasksDates"
                               label="Не сортировать"
                               onClickRadio={() => {
-                                setDateSortingRadio({
-                                  all: true,
-                                  newFirst: false,
-                                  oldFirst: false
-                                })
+                                setDateSortingRadio(SortingParameters.ALL);
+                                mainStore.sortOptions.sortByDate(mainStore.tasks.showingTasksArray, SortingParameters.ALL);
+                                mainStore.tasks.setShowingTasksArray();
                               }}
           />
           <SortingOptionRadio id="newFirst"
-                              isChecked={dateSortingRadio.newFirst}
+                              isChecked={dateSortingRadio === SortingParameters.ASCENDING}
                               inputName="tasksDates"
                               label="Сначала новые"
                               onClickRadio={() => {
-                                setDateSortingRadio({
-                                  all: false,
-                                  newFirst: true,
-                                  oldFirst: false
-                                })
+                                setDateSortingRadio(SortingParameters.ASCENDING);
+                                mainStore.sortOptions.sortByDate(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING);
                               }}
           />
           <SortingOptionRadio id="oldFirst"
-                              isChecked={dateSortingRadio.oldFirst}
+                              isChecked={dateSortingRadio === SortingParameters.DESCENDING}
                               inputName="tasksDates"
                               label="Сначала старые"
                               onClickRadio={() => {
-                                setDateSortingRadio({
-                                  all: false,
-                                  newFirst: false,
-                                  oldFirst: true
-                                })
+                                setDateSortingRadio(SortingParameters.DESCENDING);
+                                mainStore.sortOptions.sortByDate(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING);
                               }}
           />
         </fieldset>

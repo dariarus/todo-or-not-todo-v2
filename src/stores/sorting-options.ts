@@ -1,36 +1,62 @@
 import {makeAutoObservable, toJS} from 'mobx';
-import {SortingByDate, SortingByImportance, SortingByNames} from '../services/types/state';
+import {SortingParameters} from '../services/types/state';
 import {TTask} from '../services/types/props';
 
 export class SortingOptions {
-  sortingByNameParameter: SortingByNames = SortingByNames.ALL;
-  sortingByImportanceParameter: SortingByImportance = SortingByImportance.ALL;
-  sortingByDateParameter: SortingByDate = SortingByDate.ALL;
+  sortingByNameParameter: SortingParameters = SortingParameters.ALL;
+  sortingByImportanceParameter: SortingParameters = SortingParameters.ALL;
+  sortingByDateParameter: SortingParameters = SortingParameters.ALL;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  sortByNames(sortingArray: TTask[], order: SortingByNames) {
-    this.sortingByNameParameter = order;
-    const sortTasksByName = (a: TTask, b: TTask) => {
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
-      if (nameA > nameB) {
-        return 1;
-      } else if (nameA < nameB) {
-        return -1
-      }
-      return 0;
+  sort<T>(a: T, b: T) {
+    if (a > b) {
+      return 1;
+    } else if (a < b) {
+      return -1
     }
+    return 0;
+  }
 
+  sortByNames(sortingArray: TTask[], order: SortingParameters) {
+    this.sortingByNameParameter = order;
     switch (order) {
-      case SortingByNames.ALL:
+      case SortingParameters.ALL:
         return;
-      case SortingByNames.ASC_ALPHABET:
-        return sortingArray.sort((a, b) => sortTasksByName(a, b));
-      case SortingByNames.DESC_ALPHABET:
-        return sortingArray.sort((a, b) => sortTasksByName(b, a));
+      case SortingParameters.ASCENDING:
+        return sortingArray.sort((a, b) => this.sort(a.name?.toUpperCase(), b.name?.toUpperCase()));
+      case SortingParameters.DESCENDING:
+        return sortingArray.sort((a, b) => this.sort(b.name.toUpperCase(), a.name.toUpperCase()));
+    }
+  }
+
+  sortByImportance(sortingArray: TTask[], order: SortingParameters) {
+    this.sortingByImportanceParameter = order;
+    switch (order) {
+      case SortingParameters.ALL:
+        return;
+      case SortingParameters.ASCENDING:
+        return sortingArray.sort((a, b) => this.sort(b.isImportant, a.isImportant));
+      case SortingParameters.DESCENDING:
+        return sortingArray.sort((a, b) => this.sort(a.isImportant, b.isImportant));
+    }
+  }
+
+  sortByDate(sortingArray: TTask[], order: SortingParameters) {
+    this.sortingByDateParameter = order;
+    switch (order) {
+      case SortingParameters.ALL:
+        return;
+      case SortingParameters.ASCENDING:
+        return sortingArray.sort((a, b) => a.closeDate && b.closeDate
+          ? this.sort(b.closeDate, a.closeDate)
+          : this.sort(b.createDate, a.createDate));
+      case SortingParameters.DESCENDING:
+        return sortingArray.sort((a, b) => a.closeDate && b.closeDate
+          ? this.sort(a.closeDate, b.closeDate)
+          : this.sort(a.createDate, b.createDate));
     }
   }
 }
