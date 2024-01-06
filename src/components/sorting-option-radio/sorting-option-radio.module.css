@@ -23,8 +23,8 @@
   content: "";
   background-color: #00996f;
   box-shadow: inset 0 0 0 10px #fff;
-  width: 15px;
-  height: 15px;
+  width: 10px;
+  height: 10px;
   border: 1px solid #abb1c1;
   border-radius: 50%;
   transition: box-shadow 0.2s;

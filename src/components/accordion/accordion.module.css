@@ -33,14 +33,23 @@
   color: #00996f;
 }
 
-.accordion__text_subheading {
-  margin-bottom: 10px;
-  font-size: 18px;
-  line-height: 20px;
-  color: #000;
-}
-
 .form {
   display: flex;
   justify-content: space-between;
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  margin-bottom: 10px;
+  font-family: 'Nunito', 'Arial', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 20px;
+  color: #000;
 }

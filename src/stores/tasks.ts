@@ -17,7 +17,7 @@ export class Tasks {
   }
 
   addNewTask(newTask: TTask) {
-    this.fullTasksArray.push(newTask);
+    this.fullTasksArray.unshift(newTask);
   }
 
   setTaskCompletionFilterValue(value: TaskCompletion) {

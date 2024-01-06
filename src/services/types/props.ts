@@ -48,6 +48,7 @@ export type TTooltip = {
 export type TSortOptionRadio = {
   id: string,
   isChecked: boolean,
-  onClickRadio: () => void,
   label: string,
+  inputName: string,
+  onClickRadio: () => void,
 }

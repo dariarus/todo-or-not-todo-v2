@@ -14,7 +14,7 @@ import mainStore from '../../stores';
 
 import {radioButtonsInitialState} from '../../utils/constants';
 
-import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
+import {IRadioButtonsState, SortingByNames, TaskCompletion} from '../../services/types/state';
 import {SearchForm} from '../search-form/search-form';
 import {Accordion} from '../accordion/accordion';
 
@@ -69,18 +69,22 @@ const App: FunctionComponent = observer(() => {
       <h1 className={appStyles['todos-board__heading']}>Мои задачи</h1>
       <div className={appStyles['todos-board']}>
 
-        {/*1). Не работает, так как прокинута ссылка на ф-цию, без контекста.
+        {/*1). <AddTaskForm onAddTask={mainStore.tasks.addNewTask}/>
+        Не работает, так как прокинута ссылка на ф-цию, без контекста.
         Т.е. в месте вызова не будет объявлена переменная this.fullTasksArray, и поэтому падает в ошибку this.fullTasksArray - undefined */}
-        {/*<AddTaskForm onAddTask={mainStore.tasks.addNewTask}/>*/}
-        {/*2). Работает, так как прокинут контекст в сам коллбэк (task: TTask) => ...*/}
-        {/*<AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
+
+        {/*2). <AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
+        {/* Работает, так как прокинут контекст в сам коллбэк (task: TTask) => ...*/}
+
         {/*3). Но можно вообще без пропсов, а вызвать addTask прямо в месте выполнения. Тогда нет проблем с контекстом*/}
         <AddTaskForm/>
 
         <div className={appStyles['todos-board__tasks-wrap']}>
           <SearchForm/>
           <div className={appStyles['radio-button-wrap']}>
-            <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
+            <RadioButton label="Все задачи"
+                         value="all"
+                         isChecked={filterRadioButtons.allIsChecked}
                          onClickRadio={() => {
                            setFilterRadioButtons({
                              allIsChecked: true,
@@ -89,7 +93,9 @@ const App: FunctionComponent = observer(() => {
                            });
                            mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.ALL)
                          }}/>
-            <RadioButton label="Невыполненные" value="undone" isChecked={filterRadioButtons.undoneIsChecked}
+            <RadioButton label="Невыполненные"
+                         value="undone"
+                         isChecked={filterRadioButtons.undoneIsChecked}
                          onClickRadio={() => {
                            setFilterRadioButtons({
                              allIsChecked: false,
@@ -98,7 +104,9 @@ const App: FunctionComponent = observer(() => {
                            });
                            mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.UNDONE)
                          }}/>
-            <RadioButton label="Выполненные" value="done" isChecked={filterRadioButtons.doneIsChecked}
+            <RadioButton label="Выполненные"
+                         value="done"
+                         isChecked={filterRadioButtons.doneIsChecked}
                          onClickRadio={() => {
                            setFilterRadioButtons({
                              allIsChecked: false,
@@ -115,6 +123,7 @@ const App: FunctionComponent = observer(() => {
               />
             }
           </div>
+          {/*<Accordion isActive={accordionIsActive}/>*/}
           <Accordion isActive={accordionIsActive}/>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
             {
@@ -134,7 +143,7 @@ const App: FunctionComponent = observer(() => {
                                   closeDate={task.closeDate}
                                   onMoveTask={handleOnMoveTask}
                         />
-                      )).reverse()
+                      ))
                     }
                   </ul>
                 </DndProvider>

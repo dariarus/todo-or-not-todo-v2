@@ -15,6 +15,7 @@ const stores = {
   mainStore,
   tasksStore: mainStore.tasks,
   popupStore: mainStore.popup,
+  sortOptionsStore: mainStore.sortOptions,
 };
 
 const app = ReactDOM.createRoot(
