@@ -3,13 +3,15 @@ import React, {FunctionComponent, useState} from 'react';
 import accordionStyles from './accordion.module.css';
 
 import {SortingOptionRadio} from '../sorting-option-radio/sorting-option-radio';
-import {SortingParameters, TaskCompletion} from '../../services/types/state';
+
 import mainStore from '../../stores';
+
+import {SortingParameters, TaskCompletion} from '../../services/types/state';
 
 export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
   const [alphabetSortingRadio, setAlphabetSortingRadio] = useState<SortingParameters>(SortingParameters.ALL);
   const [importanceSortingRadio, setImportanceSortingRadio] = useState<SortingParameters>(SortingParameters.ALL);
-  const [dateSortingRadio, setDateSortingRadio] = useState<SortingParameters>(SortingParameters.ALL);
+  const [dateSortingRadio, setDateSortingRadio] = useState<SortingParameters>(SortingParameters.ASCENDING);
 
   return (
     <div className={
@@ -38,7 +40,10 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
                               label="А &#8594; Я"
                               onClickRadio={() => {
                                 setAlphabetSortingRadio(SortingParameters.ASCENDING);
-                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING)
+                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING);
+
+                                setImportanceSortingRadio(SortingParameters.ALL);
+                                setDateSortingRadio(SortingParameters.ASCENDING);
                               }}
           />
           <SortingOptionRadio id="descAlphabet"
@@ -47,7 +52,10 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
                               label="Я &#8594; А"
                               onClickRadio={() => {
                                 setAlphabetSortingRadio(SortingParameters.DESCENDING);
-                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING)
+                                mainStore.sortOptions.sortByNames(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING);
+
+                                setImportanceSortingRadio(SortingParameters.ALL);
+                                setDateSortingRadio(SortingParameters.ASCENDING);
                               }}
           />
         </fieldset>
@@ -70,6 +78,9 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
                               onClickRadio={() => {
                                 setImportanceSortingRadio(SortingParameters.ASCENDING);
                                 mainStore.sortOptions.sortByImportance(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING);
+
+                                setAlphabetSortingRadio(SortingParameters.ALL);
+                                setDateSortingRadio(SortingParameters.ASCENDING);
                               }}
           />
           <SortingOptionRadio id="notImportant"
@@ -79,6 +90,9 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
                               onClickRadio={() => {
                                 setImportanceSortingRadio(SortingParameters.DESCENDING);
                                 mainStore.sortOptions.sortByImportance(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING);
+
+                                setAlphabetSortingRadio(SortingParameters.ALL);
+                                setDateSortingRadio(SortingParameters.ASCENDING);
                               }}
           />
         </fieldset>
@@ -86,16 +100,6 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
           <legend className={accordionStyles.legend}>По
             дате {mainStore.tasks.taskCompletionFilterValue === TaskCompletion.DONE
               ? 'выполнения' : 'добавления'}</legend>
-          <SortingOptionRadio id="allDates"
-                              isChecked={dateSortingRadio === SortingParameters.ALL}
-                              inputName="tasksDates"
-                              label="Не сортировать"
-                              onClickRadio={() => {
-                                setDateSortingRadio(SortingParameters.ALL);
-                                mainStore.sortOptions.sortByDate(mainStore.tasks.showingTasksArray, SortingParameters.ALL);
-                                mainStore.tasks.setShowingTasksArray();
-                              }}
-          />
           <SortingOptionRadio id="newFirst"
                               isChecked={dateSortingRadio === SortingParameters.ASCENDING}
                               inputName="tasksDates"
@@ -103,6 +107,9 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
                               onClickRadio={() => {
                                 setDateSortingRadio(SortingParameters.ASCENDING);
                                 mainStore.sortOptions.sortByDate(mainStore.tasks.showingTasksArray, SortingParameters.ASCENDING);
+
+                                setAlphabetSortingRadio(SortingParameters.ALL);
+                                setImportanceSortingRadio(SortingParameters.ALL);
                               }}
           />
           <SortingOptionRadio id="oldFirst"
@@ -112,6 +119,9 @@ export const Accordion: FunctionComponent<{ isActive: boolean }> = (props) => {
                               onClickRadio={() => {
                                 setDateSortingRadio(SortingParameters.DESCENDING);
                                 mainStore.sortOptions.sortByDate(mainStore.tasks.showingTasksArray, SortingParameters.DESCENDING);
+
+                                setAlphabetSortingRadio(SortingParameters.ALL);
+                                setImportanceSortingRadio(SortingParameters.ALL);
                               }}
           />
         </fieldset>

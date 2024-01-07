@@ -10,7 +10,7 @@ class MainStore {
   constructor() {
     this.tasks = new Tasks();
     this.popup = new Popup();
-    this.sortOptions = new SortingOptions();
+    this.sortOptions = new SortingOptions(this.tasks);
   }
 }
 
