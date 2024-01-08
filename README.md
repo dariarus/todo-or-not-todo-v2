@@ -46,6 +46,7 @@
 * TSX
 * React Hook
 * MobX
+* react-dnd
 * flexbox
 * БЭМ
 * JavaScript
