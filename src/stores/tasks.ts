@@ -1,9 +1,10 @@
 import {autorun, IObservableArray, makeAutoObservable, observable, reaction} from 'mobx';
 import {TTask} from '../services/types/props';
 import {TaskCompletion} from '../services/types/state';
+import {loadTasksFromLocalStorage} from '../utils/functions';
 
 export class Tasks {
-  fullTasksArray: TTask[] = [];
+  fullTasksArray: TTask[] = loadTasksFromLocalStorage();
   showingTasksArray: TTask[] = [];
   taskNameFilterValue: string = '';
   taskCompletionFilterValue: TaskCompletion = TaskCompletion.ALL;
@@ -14,9 +15,7 @@ export class Tasks {
     // Работает autorun, а не reaction, потому что нужна реакция на изменения в исходном массиве, который не перезаписывается полностью,
     // а меняются только существующие в нем элементы (задачи)
     autorun(() => {
-        if (this.fullTasksArray.length > 0) {
-          localStorage.setItem('tasksArray', JSON.stringify(this.fullTasksArray));
-        }
+        localStorage.setItem('tasksArray', JSON.stringify(this.fullTasksArray));
       }
     )
   }

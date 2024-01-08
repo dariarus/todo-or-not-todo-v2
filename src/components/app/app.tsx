@@ -15,11 +15,9 @@ import {Accordion} from '../accordion/accordion';
 import mainStore from '../../stores';
 
 import {radioButtonsInitialState} from '../../utils/constants';
-import {parseTaskDateFromLocalStorage} from '../../utils/functions';
+import {loadTasksFromLocalStorage} from '../../utils/functions';
 
 import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
-
-import {TTask} from '../../services/types/props';
 
 const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
@@ -59,9 +57,8 @@ const App: FunctionComponent = observer(() => {
   }, [mainStore.tasks.fullTasksArray, mainStore.tasks.showingTasksArray])
 
   useEffect(() => {
-    const savedTasksArray: TTask[] = JSON.parse(localStorage.getItem('tasksArray') || '[]');
     // Формат Date не парсится из localStorage, поэтому в createDate и closeDate находится текст вместо даты. Надо сериализовать вручную:
-    parseTaskDateFromLocalStorage(savedTasksArray);
+    const savedTasksArray = loadTasksFromLocalStorage();
     mainStore.tasks.setFullTasksArray(savedTasksArray);
   }, [])
 
