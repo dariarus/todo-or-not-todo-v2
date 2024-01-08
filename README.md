@@ -80,4 +80,8 @@ npm run dev
 4). Открыть приложение в браузере по адресу:
 http://127.0.0.1:3000/toDo-or-not-toDo/
 
-*Ссылка на страницу приложения на GitHub Pages*: [ToDo-2](https://dariarus.github.io/todo-or-not-todo-v2/)
+#### Ссылка на страницу приложения на GitHub Pages:
+[ToDo-2](https://dariarus.github.io/todo-or-not-todo-v2/)
+
+#### Предыдущая версия приложения:
+[Посмотреть репозиторий](https://github.com/dariarus/todo-or-not-todo)
