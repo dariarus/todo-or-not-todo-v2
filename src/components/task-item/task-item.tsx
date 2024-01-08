@@ -87,13 +87,14 @@ export const TaskItem: FunctionComponent<TTaskItem> = observer((props) => {
         data-handler-id={handlerId}
         className={isDragging ? `${taskItemStyles.task} ${taskItemStyles['task_is-dragging']}` : `${taskItemStyles.task}`}>
       {
-        props.isDone
+        props.isDone && props.closeDate
           ? <p className={
             `${taskItemStyles['task__text']} 
         ${taskItemStyles['task__text_paragraph']} 
         ${taskItemStyles['task__date']}`
           }>Выполнена {props.closeDate?.toLocaleDateString('ru-RU')}</p>
-          : <p className={
+          : props.createDate &&
+          <p className={
             `${taskItemStyles['task__text']} 
         ${taskItemStyles['task__text_paragraph']} 
         ${taskItemStyles['task__date']}`

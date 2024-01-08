@@ -12,6 +12,8 @@ export class SortingOptions {
     this.tasksState = tasksState;
     makeAutoObservable(this);
 
+    // Меняем showingTasksArray при каждом изменении задач в fullTasksArray.
+    // Работает reaction вместо autorun, потому что showingTasksArray перезаписывается полностью каждый раз при изменении fullTasksArray
     reaction(
       () =>
         // скопировать поступивший в контсруктор массив видимых задач

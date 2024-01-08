@@ -9,14 +9,17 @@ import {AddTaskForm} from '../add-task-form/add-task-form';
 import {RadioButton} from '../radio-button/radio-button';
 import {TaskItem} from '../task-item/task-item';
 import {Popup} from '../popup/popup';
+import {SearchForm} from '../search-form/search-form';
+import {Accordion} from '../accordion/accordion';
 
 import mainStore from '../../stores';
 
 import {radioButtonsInitialState} from '../../utils/constants';
+import {parseTaskDateFromLocalStorage} from '../../utils/functions';
 
 import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
-import {SearchForm} from '../search-form/search-form';
-import {Accordion} from '../accordion/accordion';
+
+import {TTask} from '../../services/types/props';
 
 const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
@@ -54,6 +57,13 @@ const App: FunctionComponent = observer(() => {
     mainStore.tasks.setFullTasksArray(updatedTasksArray);
     mainStore.tasks.setShowingTasksArray();
   }, [mainStore.tasks.fullTasksArray, mainStore.tasks.showingTasksArray])
+
+  useEffect(() => {
+    const savedTasksArray: TTask[] = JSON.parse(localStorage.getItem('tasksArray') || '[]');
+    // Формат Date не парсится из localStorage, поэтому в createDate и closeDate находится текст вместо даты. Надо сериализовать вручную:
+    parseTaskDateFromLocalStorage(savedTasksArray);
+    mainStore.tasks.setFullTasksArray(savedTasksArray);
+  }, [])
 
   useEffect(() => {
     mainStore.tasks.setShowingTasksArray();
