@@ -15,7 +15,6 @@ export const SearchForm: FunctionComponent = () => {
                className={!inputValue
                  ? `${searchFormStyles.input}`
                  : `${searchFormStyles.input} ${searchFormStyles['input_not-empty']}`}
-               disabled={mainStore.tasks.fullTasksArray.length < 1}
                onChange={(e: ChangeEvent<HTMLInputElement>) => {
                  setInputValue(e.target.value);
                  mainStore.tasks.setTaskNameFilterValue(e.target.value);

@@ -19,7 +19,7 @@ export const AddTaskForm: FunctionComponent = observer(() => {
 
   return (
     <form className={addTaskFormStyles.form}
-          onChange={(e: FormEvent<HTMLFormElement>) => {
+          onSubmit={(e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
           }}
     >

@@ -90,7 +90,10 @@ const App: FunctionComponent = observer(() => {
         <AddTaskForm/>
 
         <div className={appStyles['todos-board__tasks-wrap']}>
-          <SearchForm/>
+          {
+            mainStore.tasks.fullTasksArray.length > 0 &&
+            <SearchForm/>
+          }
           <div className={appStyles['radio-button-wrap']}>
             <RadioButton label="Все задачи"
                          value="all"
