@@ -22,7 +22,7 @@
 
 .input:checked::before {
   /*background: url(../../images/tick.png) 96% / 5% no-repeat;*/
-  background: url(../../images/tick.svg) center no-repeat;
+  background: url(../../images/tick-green.svg) center no-repeat;
 }
 
 

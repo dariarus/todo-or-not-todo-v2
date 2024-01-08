@@ -1,61 +1,73 @@
 import React, {ChangeEvent, MouseEvent, FunctionComponent, useState, FormEvent} from 'react';
+import {observer} from 'mobx-react-lite';
 
 import addTaskFormStyles from './add-task-form.module.css';
 
+import mainStore from '../../stores';
+
 import {IInputsValuesState} from '../../services/types/state';
-import {TAddTasksForm} from '../../services/types/props';
+
+import {TaskInputs} from '../task-inputs/task-inputs';
 
 import {inputsValuesInitialState} from '../../utils/constants';
 import {generateUniqueId} from '../../utils/functions';
 
-export const AddTaskForm: FunctionComponent<TAddTasksForm> = (props) => {
+export const AddTaskForm: FunctionComponent = observer(() => {
   const [inputsValues, setInputsValues] = useState<IInputsValuesState>(inputsValuesInitialState);
+
+  const createDate = new Date();
 
   return (
     <form className={addTaskFormStyles.form}
-          onChange={(e: FormEvent<HTMLFormElement>) => {
+          onSubmit={(e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
           }}
     >
-      <div className={addTaskFormStyles['form__input-wrap']}>
-        <input type="text"
-               value={inputsValues.textInputValue}
-               placeholder="Задача"
-               className={`${addTaskFormStyles.input} ${addTaskFormStyles['text-input']}`}
-               onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                 setInputsValues({
-                   ...inputsValues,
-                   textInputValue: e.target.value
-                 })
-               }}
-        />
-        <textarea value={inputsValues.textAreaValue}
-                  placeholder="Описание (опционально)"
-                  className={addTaskFormStyles['text-area']}
-                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                    setInputsValues({
-                      ...inputsValues,
-                      textAreaValue: e.target.value
-                    })
-                  }}
-        />
-      </div>
+      <TaskInputs
+        isPopupInput={false}
+        taskNameValue={inputsValues.textInputValue}
+        taskDescriptionValue={inputsValues.textAreaValue}
+        isDisabled={inputsValues.textInputValue === ''}
+        isStatusCheckboxChecked={inputsValues.isImportant}
+        setTaskNameValue={(e: ChangeEvent<HTMLInputElement>) => {
+          setInputsValues({
+            ...inputsValues,
+            textInputValue: e.target.value
+          })
+        }}
+        setTaskStatus={() => {
+          setInputsValues({
+            ...inputsValues,
+            isImportant: !inputsValues.isImportant
+          })
+        }}
+        setTaskDescriptionValue={(e: ChangeEvent<HTMLTextAreaElement>) => {
+          setInputsValues({
+            ...inputsValues,
+            textAreaValue: e.target.value
+          })
+        }}/>
       <button type="submit"
               className={addTaskFormStyles.button}
               disabled={inputsValues.textInputValue === ''}
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
-                props.onAddTask({
+                mainStore.tasks.addNewTask({
                   id: generateUniqueId(),
                   name: inputsValues.textInputValue,
                   description: inputsValues.textAreaValue ? inputsValues.textAreaValue : undefined,
-                  isDone: false
+                  isImportant: inputsValues.isImportant,
+                  isDone: false,
+                  createDate: createDate,
+                  closeDate: null
+                  // closeDate: undefined
                 });
                 setInputsValues(inputsValuesInitialState);
+                mainStore.tasks.setShowingTasksArray();
               }}
       >
         Добавить<br/>задачу
       </button>
     </form>
   )
-}
+})

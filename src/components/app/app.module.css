@@ -9,6 +9,7 @@
 }
 
 .todos-board {
+  /*box-sizing: border-box;*/
   width: 100%;
   border-top: 1px solid rgba(171, 177, 193, .5); /* #abb1c1 */
   border-left: 1px solid rgba(171, 177, 193, .5);
@@ -33,15 +34,33 @@
 }
 
 .radio-button-wrap {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
 }
 
+.radio-button-wrap__settings-button {
+  all: unset;
+  position: absolute;
+  top: -4px;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background: url(../../images/settings-black.svg) center center no-repeat;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.radio-button-wrap__settings-button:hover {
+  background: url(../../images/settings-green.svg) center center no-repeat;
+}
+
 .todos-board__tasks-list-wrap {
   display: flex;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .todos-board__tasks-list {

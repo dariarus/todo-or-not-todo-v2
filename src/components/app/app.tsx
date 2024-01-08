@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {FunctionComponent, useCallback, useEffect, useState} from 'react';
+import {observer} from 'mobx-react-lite';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 
@@ -7,52 +8,30 @@ import appStyles from './app.module.css';
 import {AddTaskForm} from '../add-task-form/add-task-form';
 import {RadioButton} from '../radio-button/radio-button';
 import {TaskItem} from '../task-item/task-item';
+import {Popup} from '../popup/popup';
+import {SearchForm} from '../search-form/search-form';
+import {Accordion} from '../accordion/accordion';
+
+import mainStore from '../../stores';
 
 import {radioButtonsInitialState} from '../../utils/constants';
+import {loadTasksFromLocalStorage} from '../../utils/functions';
 
-import {IRadioButtonsState} from '../../services/types/state';
-import {TTask} from '../../services/types/props';
+import {IRadioButtonsState, TaskCompletion} from '../../services/types/state';
 
-function App() {
+const App: FunctionComponent = observer(() => {
   const [filterRadioButtons, setFilterRadioButtons] = useState<IRadioButtonsState>(radioButtonsInitialState);
-  const [tasksArray, setTasksArray] = useState<Array<TTask>>([]);
-  const [showingArray, setShowingArray] = useState<Array<TTask>>(tasksArray);
-
-  const handleSetTasksArray = (task: TTask) => {
-    let copiedTasks = [...tasksArray];
-    copiedTasks.push(task);
-    setTasksArray(copiedTasks);
-  }
-
-  const refreshTasksArray = () => {
-    if (filterRadioButtons.allIsChecked) {
-      setShowingArray(tasksArray);
-    } else if (filterRadioButtons.undoneIsChecked) {
-      const filteredUndoneTasksArray = tasksArray.filter(task => !task.isDone);
-      setShowingArray(filteredUndoneTasksArray);
-    } else {
-      const filteredDoneTasksArray = tasksArray.filter(task => task.isDone);
-      setShowingArray(filteredDoneTasksArray);
-    }
-  }
-
-  const handleOnChangeTaskStatus = (taskId: string) => {
-    let copiedTasks = tasksArray.map(task => {
-      return {...task}
-    });
-    if (taskId) {
-      const task = copiedTasks.find(task => task.id === taskId);
-      if (task) {
-        task.isDone = !task.isDone;
-      }
-    }
-    setTasksArray(copiedTasks);
-  }
+  const [accordionIsActive, setAccordionIsActive] = useState<boolean>(false);
 
   const handleOnMoveTask = useCallback((dragIndex: number, hoverIndex: number) => {
-    /* Перемещаем элементы в массиве showingArray, отображаемом в зависимости от выбранной сортировки задач,
+    /* Перемещаем элементы в массиве mainStore.tasks.showingTasksArray, отображаемом в зависимости от выбранной сортировки задач,
     на основе его индексов */
-    const updatedShowingArray = [...showingArray];
+
+    /* Если модифицировать напрямую mainStore (например, писать mainStore.tasks.showingTasksArray[dragIndex] = hoverItem),
+    то возникает предупреждение "[MobX] Since strict-mode is enabled,
+    changing (observed) observable values without using an action is not allowed. Tried to modify: Tasks@1.fullTasksArray"
+    Поэтому применено копирование состояния и запись обновленного массива обратно в mainStore*/
+    const updatedShowingArray = [...mainStore.tasks.showingTasksArray];
 
     const dragItem = updatedShowingArray[dragIndex]
     const hoverItem = updatedShowingArray[hoverIndex]
@@ -60,10 +39,8 @@ function App() {
     updatedShowingArray[dragIndex] = hoverItem;
     updatedShowingArray[hoverIndex] = dragItem;
 
-    setShowingArray(updatedShowingArray);
-
-    // Перемещаем элементы в основном массиве tasksArray на основе его индексов
-    const updatedTasksArray = [...tasksArray];
+    // Перемещаем элементы в основном массиве mainStore.tasks.fullTasksArray на основе его индексов
+    const updatedTasksArray = [...mainStore.tasks.fullTasksArray];
 
     const dragTask = updatedTasksArray.find(task => task.id === dragItem.id);
     const hoverTask = updatedTasksArray.find(task => task.id === hoverItem.id);
@@ -75,78 +52,107 @@ function App() {
       updatedTasksArray[hoverTaskIndex] = dragItem;
     }
 
-    setTasksArray(updatedTasksArray);
-  }, [tasksArray, showingArray])
-
-  const handleOnDeleteTask = (taskId: string) => {
-    let copiedTasks = [...tasksArray];
-    if (taskId) {
-      const task = copiedTasks.find(task => task.id === taskId);
-      let taskIndex = -1;
-      if (task) {
-        taskIndex = copiedTasks.indexOf(task);
-      }
-      if (taskIndex > -1) {
-        copiedTasks.splice(taskIndex, 1);
-      }
-    }
-    setTasksArray(copiedTasks);
-  }
+    mainStore.tasks.setFullTasksArray(updatedTasksArray);
+    mainStore.tasks.setShowingTasksArray();
+  }, [mainStore.tasks.fullTasksArray, mainStore.tasks.showingTasksArray])
 
   useEffect(() => {
-    refreshTasksArray();
-  }, [tasksArray, filterRadioButtons.allIsChecked, filterRadioButtons.undoneIsChecked, filterRadioButtons.doneIsChecked])
+    // Формат Date не парсится из localStorage, поэтому в createDate и closeDate находится текст вместо даты. Надо сериализовать вручную:
+    const savedTasksArray = loadTasksFromLocalStorage();
+    mainStore.tasks.setFullTasksArray(savedTasksArray);
+  }, [])
+
+  useEffect(() => {
+    mainStore.tasks.setShowingTasksArray();
+  }, [
+    mainStore.tasks.fullTasksArray,
+    filterRadioButtons.allIsChecked,
+    filterRadioButtons.undoneIsChecked,
+    filterRadioButtons.doneIsChecked
+  ])
 
   return (
     <main className={appStyles.main}>
       <h1 className={appStyles['todos-board__heading']}>Мои задачи</h1>
       <div className={appStyles['todos-board']}>
-        <AddTaskForm tasksArray={tasksArray} onAddTask={handleSetTasksArray}/>
+
+        {/*1). <AddTaskForm onAddTask={mainStore.tasks.addNewTask}/>
+        Не работает, так как прокинута ссылка на ф-цию, без контекста.
+        Т.е. в месте вызова не будет объявлена переменная this.fullTasksArray, и поэтому падает в ошибку this.fullTasksArray - undefined */}
+
+        {/*2). <AddTaskForm onAddTask={(task) => mainStore.tasks.addNewTask(task)}/>*/}
+        {/* Работает, так как прокинут контекст в сам коллбэк (task: TTask) => ...*/}
+
+        {/*3). Но можно вообще без пропсов, а вызвать addTask прямо в месте выполнения. Тогда нет проблем с контекстом*/}
+        <AddTaskForm/>
+
         <div className={appStyles['todos-board__tasks-wrap']}>
+          {
+            mainStore.tasks.fullTasksArray.length > 0 &&
+            <SearchForm/>
+          }
           <div className={appStyles['radio-button-wrap']}>
-            <RadioButton label="Все задачи" value="all" isChecked={filterRadioButtons.allIsChecked}
+            <RadioButton label="Все задачи"
+                         value="all"
+                         isChecked={filterRadioButtons.allIsChecked}
                          onClickRadio={() => {
                            setFilterRadioButtons({
                              allIsChecked: true,
                              undoneIsChecked: false,
                              doneIsChecked: false
                            });
+                           mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.ALL)
                          }}/>
-            <RadioButton label="Невыполненные" value="undone" isChecked={filterRadioButtons.undoneIsChecked}
+            <RadioButton label="Невыполненные"
+                         value="undone"
+                         isChecked={filterRadioButtons.undoneIsChecked}
                          onClickRadio={() => {
                            setFilterRadioButtons({
                              allIsChecked: false,
                              undoneIsChecked: true,
                              doneIsChecked: false
                            });
+                           mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.UNDONE)
                          }}/>
-            <RadioButton label="Выполненные" value="done" isChecked={filterRadioButtons.doneIsChecked}
+            <RadioButton label="Выполненные"
+                         value="done"
+                         isChecked={filterRadioButtons.doneIsChecked}
                          onClickRadio={() => {
                            setFilterRadioButtons({
                              allIsChecked: false,
                              undoneIsChecked: false,
                              doneIsChecked: true
                            });
+                           mainStore.tasks.setTaskCompletionFilterValue(TaskCompletion.DONE)
                          }}/>
+            {
+              mainStore.tasks.fullTasksArray.length > 0 &&
+              <button type="button"
+                      className={appStyles['radio-button-wrap__settings-button']}
+                      onClick={() => setAccordionIsActive(!accordionIsActive)}
+              />
+            }
           </div>
+          <Accordion isActive={accordionIsActive}/>
           <div className={appStyles['todos-board__tasks-list-wrap']}>
             {
-              showingArray && showingArray.length > 0
+              mainStore.tasks.showingTasksArray && mainStore.tasks.showingTasksArray.length > 0
                 ? <DndProvider backend={HTML5Backend}>
                   <ul className={appStyles['todos-board__tasks-list']}>
                     {
-                      showingArray.map((task, index) => (
+                      mainStore.tasks.showingTasksArray.map((task, index) => (
                         <TaskItem key={task.id}
                                   id={task.id}
                                   index={index}
                                   name={task.name}
                                   description={task.description}
                                   isDone={task.isDone}
-                                  onChangeTaskStatus={handleOnChangeTaskStatus}
-                                  onDeleteTask={handleOnDeleteTask}
+                                  isImportant={task.isImportant}
+                                  createDate={task.createDate}
+                                  closeDate={task.closeDate}
                                   onMoveTask={handleOnMoveTask}
                         />
-                      )).reverse()
+                      ))
                     }
                   </ul>
                 </DndProvider>
@@ -155,8 +161,12 @@ function App() {
           </div>
         </div>
       </div>
+      {
+        mainStore.popup.isOpened &&
+        <Popup/>
+      }
     </main>
   );
-}
+})
 
 export default App;
