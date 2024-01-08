@@ -1,7 +1,9 @@
 {
   "name": "todo-or-not-todo",
-  "homepage": "https://dariarus.github.io/todo-or-not-todo_v.2.0",
+  "homepage": "https://dariarus.github.io/todo-or-not-todo-v2",
   "version": "0.1.0",
+  "type": "module",
+  "jsx": "react",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -34,11 +36,5 @@
     "preview": "vite preview",
     "predeploy" : "npm run build",
     "deploy" : "gh-pages -d dist"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   }
 }

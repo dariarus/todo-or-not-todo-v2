@@ -7,7 +7,7 @@ export default defineConfig({
       tsDecorators: true
     }),
   ],
-  base: "/toDo-or-not-toDo/",
+  base: "/todo-or-not-todo-v2/",
   server: {
     host: 'localhost',
     port: 3000
